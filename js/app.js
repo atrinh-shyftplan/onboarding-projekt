@@ -248,7 +248,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function openVideoModal(videoSrc, title, info) {
         // Use innerHTML for the title to render potential <strong> tags etc.
         if (videoModalTitle) videoModalTitle.innerHTML = title || ''; // The title now contains the bubble
-        if (videoModalInfo) videoModalInfo.textContent = info || '';
         if (videoModalInfo) videoModalInfo.innerHTML = info || '';
 
         videoPlayer.src = videoSrc;
