@@ -869,15 +869,15 @@ export const toolPages = {
                 .use-case-table tbody tr td { vertical-align: middle; }
                 .category-cell { position: relative; }
                 .category-line { position: absolute; left: 8px; top: 8px; bottom: 8px; width: 3px; border-radius: 9999px;}
-                .use-case-table .info-list { list-style: disc; padding-left: 1.5rem; }
-                .use-case-table .info-list li { margin-bottom: 0.5rem; }
+                .info-list { list-style: disc; padding-left: 1.5rem; }
+                .info-list li { margin-bottom: 0.5rem; }
             </style>
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto w-4/5 mx-auto">
                 <table class="w-full text-left min-w-[800px] use-case-table">
                     <thead class="text-xs text-slate-700 bg-slate-50">
                         <tr>
                             <th class="px-6 py-3 font-semibold w-[30%]">Kategorie</th>
-                            <th class="px-6 py-3 font-semibold w-[60%]">Aufgabe</th>
+                            <th class="px-6 py-3 font-semibold w-[60%]">Arbeitsschritt</th>
                             <th class="px-6 py-3 font-semibold w-[10%] text-center">Video</th>
                         </tr>
                     </thead>
@@ -895,7 +895,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                                <button data-action="open-video-modal" data-full-title="Leeren Schichtplan erstellen & Maschinen Vorplanen" data-video-src="assets/videos/video1.mp4" data-info="<ul class='info-list'><li>Schichtrotationen anwenden: Erzeugen von leeren Schichten (z.B. Früh/Spät/Nacht)</li></ul><p class='mt-4'><strong>Feiertagsregelungen bei Schicht-Modellen</strong></p><ul class='info-list'><li>18 Schicht-Modell = Schichtherstellung für Feiertage verhindern (aus dem Feiertag heraus arbeiten)</li><li>15 Schicht-Modell = Schichtherstellung für Feiertage verhindern (in den Feiertag hinein arbeiten)</li></ul>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                                <button data-action="open-video-modal" data-full-title="Leeren Schichtplan erstellen & Maschinen Vorplanen" data-video-src="assets/videos/video1.mp4" data-info="<p>Schichtrotationen anwenden: Erzeugen von leeren Schichten (z.B. Früh/Spät/Nacht)</p><p class='mt-4'><strong>Feiertagsregelungen bei Schicht-Modellen</strong></p><p class='mt-2'>18 Schicht-Modell = Schichtherstellung für Feiertage verhindern (aus dem Feiertag heraus arbeiten)</p><p class='mt-2'>15 Schicht-Modell = Schichtherstellung für Feiertage verhindern (in den Feiertag hinein arbeiten)</p>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -906,7 +906,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                               <button data-action="open-video-modal" data-full-title="Zusatzinformationen im Schichtplan ergänzen" data-video-src="assets/videos/video2.mp4" data-info="<ul class='info-list'><li><strong>Schichtetiketten:</strong> Mit Schichtetiketten können Zusatzinformationen an die Mitarbeiter weitergegeben werden</li><li><strong>Tagesinfo:</strong> Die Tagesinfo kann verwendet werden, um allgemeine Infos zu dem Schichtplan anzeigen zu lassen</li></ul>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                               <button data-action="open-video-modal" data-full-title="Zusatzinformationen im Schichtplan ergänzen" data-video-src="assets/videos/video2.mp4" data-info="<p><strong>Schichtetiketten:</strong> Mit Schichtetiketten können Zusatzinformationen an die Mitarbeiter weitergegeben werden.</p><p class='mt-4'><strong>Tagesinfo:</strong> Die Tagesinfo kann verwendet werden, um allgemeine Infos zu dem Schichtplan anzeigen zu lassen.</p>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -916,7 +916,7 @@ export const toolPages = {
                             </td>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="user-plus" class="h-5 w-5 mr-3 text-blue-600 flex-shrink-0"></i>
+                                    <i data-lucide="user-plus" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Schichten mit Mitarbeiter besetzen</span>
                                 </div>
                             </td>
@@ -927,7 +927,7 @@ export const toolPages = {
                          <tr>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="search-users" class="h-5 w-5 mr-3 text-blue-600 flex-shrink-0"></i>
+                                    <i data-lucide="search-users" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Besetzung der Mitarbeiter auf den Schichten prüfen</span>
                                 </div>
                             </td>
@@ -942,7 +942,7 @@ export const toolPages = {
                             </td>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="clock" class="h-5 w-5 mr-3 text-pink-600 flex-shrink-0"></i>
+                                    <i data-lucide="clock" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Mehrarbeiten der Mitarbeiter einplanen</span>
                                 </div>
                             </td>
@@ -953,7 +953,7 @@ export const toolPages = {
                         <tr>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="gavel" class="h-5 w-5 mr-3 text-pink-600 flex-shrink-0"></i>
+                                    <i data-lucide="gavel" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Freigabe vom Betriebsrat vorbereiten</span>
                                 </div>
                             </td>
@@ -964,7 +964,7 @@ export const toolPages = {
                          <tr>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="send" class="h-5 w-5 mr-3 text-pink-600 flex-shrink-0"></i>
+                                    <i data-lucide="send" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Schichtplan veröffentlichen mit Hinweis an meine Mitarbeiter versenden</span>
                                 </div>
                             </td>
@@ -975,7 +975,7 @@ export const toolPages = {
                         <tr>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="plane" class="h-5 w-5 mr-3 text-pink-600 flex-shrink-0"></i>
+                                    <i data-lucide="plane" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Urlaubsanträge berücksichtigen</span>
                                 </div>
                             </td>
@@ -990,7 +990,7 @@ export const toolPages = {
                             </td>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="check-check" class="h-5 w-5 mr-3 text-amber-600 flex-shrink-0"></i>
+                                    <i data-lucide="check-check" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Mehrarbeitsgenehmigungen und Zeitkorrekturen meiner Mitarbeiter berücksichtigen</span>
                                 </div>
                             </td>
@@ -1001,7 +1001,7 @@ export const toolPages = {
                         <tr>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="eye" class="h-5 w-5 mr-3 text-amber-600 flex-shrink-0"></i>
+                                    <i data-lucide="eye" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Stempelungen meiner Mitarbeiter einsehen</span>
                                 </div>
                             </td>
@@ -1012,7 +1012,7 @@ export const toolPages = {
                         <tr>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="user-minus" class="h-5 w-5 mr-3 text-amber-600 flex-shrink-0"></i>
+                                    <i data-lucide="user-minus" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Kurzfristige Abwesenheiten meiner Mitarbeiter berücksichtigen</span>
                                 </div>
                             </td>
@@ -1023,7 +1023,7 @@ export const toolPages = {
                         <tr>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="user-check" class="h-5 w-5 mr-3 text-amber-600 flex-shrink-0"></i>
+                                    <i data-lucide="user-check" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Bewerbung auf Schichten berücksichtigen</span>
                                 </div>
                             </td>
@@ -1034,7 +1034,7 @@ export const toolPages = {
                         <tr>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="users" class="h-5 w-5 mr-3 text-amber-600 flex-shrink-0"></i>
+                                    <i data-lucide="users" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Mitarbeiter kurzfristig umplanen</span>
                                 </div>
                             </td>
