@@ -1,0 +1,442 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Org Chart V3 – Bruker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    .shyftplan-purple { color: #6f42c1; }
+    .bg-shyftplan-purple { background-color: #6f42c1; }
+    .card { background:#fff; border:1px solid #e2e8f0; border-radius:0.75rem; box-shadow: 0 1px 2px rgb(0 0 0 / 0.04); }
+    .connector-v { width:2px; background:#cbd5e1; margin: 0 auto; }
+    .connector-h { height:2px; background:#cbd5e1; }
+    .summary-card { display:flex; align-items:center; gap:1rem; padding:1.25rem; }
+    .summary-card:hover { box-shadow: 0 8px 24px rgb(0 0 0 / 0.06); }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; border-radius:.5rem; padding:.5rem 1rem; font-weight:600; transition: all 0.2s; }
+    .btn-primary { background-color: #6f42c1; color: white; }
+    .btn-primary:hover { background-color: #5b21b6; }
+    .btn-secondary { background-color: #f1f5f9; color: #334155; border-color: #e2e8f0; }
+    .btn-secondary:hover { background-color: #e2e8f0; }
+    .btn-danger { background-color: #dc2626; color: white; }
+    .btn-danger:hover { background-color: #b91c1c; }
+    .detail-label { display: block; font-size: 0.875rem; font-weight: 500; color: #334155; margin-bottom: 0.25rem; }
+    .detail-input { display: block; width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.375rem; }
+    .detail-input:focus { outline: 2px solid transparent; outline-offset: 2px; border-color: #6f42c1; box-shadow: 0 0 0 2px #a78bfa; }
+    .add-area-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-style: dashed;
+        border-width: 2px;
+        background-color: transparent;
+        border-color: #cbd5e1; /* slate-300 */
+        color: #64748b; /* slate-500 */
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    .add-area-btn:hover {
+        border-color: #6f42c1;
+        color: #6f42c1;
+        background-color: #f5f3ff; /* violet-50 */
+    }
+  </style>
+</head>
+<body class="antialiased text-slate-800 p-4 sm:p-8">
+  <main class="max-w-7xl mx-auto space-y-8">
+    <header class="space-y-2">
+      <h1 class="text-3xl font-bold text-slate-900">Standortübersicht Bruker EAS <span id="header-site">–</span></h1>
+      <p class="text-slate-500">Eine visuelle Darstellung der Bereiche, Teams und Verantwortlichkeiten.</p>
+    </header>
+
+    <!-- Top: Dynamische Zusammenfassungen -->
+    <section id="summaries" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <button id="card-site" class="card summary-card text-left cursor-pointer" data-action="open-site-modal">
+        <div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+          <i data-lucide="building-2" class="h-5 w-5 shyftplan-purple"></i>
+        </div>
+        <div>
+          <div class="text-slate-500 text-sm">Standort</div>
+          <div id="summary-site" class="text-xl font-semibold text-slate-900">–</div>
+        </div>
+      </button>
+      <div class="card summary-card">
+        <div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+          <i data-lucide="users" class="h-5 w-5 shyftplan-purple"></i>
+        </div>
+        <div>
+          <div class="text-slate-500 text-sm">Mitarbeiter Gesamt</div>
+          <div id="summary-employees" class="text-xl font-semibold text-slate-900">–</div>
+        </div>
+      </div>
+      <div class="card summary-card">
+        <div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+          <i data-lucide="user-cog" class="h-5 w-5 shyftplan-purple"></i>
+        </div>
+        <div>
+          <div class="text-slate-500 text-sm">Planer & Vertreter Gesamt</div>
+          <div id="summary-planners" class="text-xl font-semibold text-slate-900">–</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Org Chart -->
+    <section id="orgchart" class="space-y-5">
+      <h2 class="text-2xl font-bold text-slate-900">Org-Chart des Projekts</h2>
+
+      <div class="flex flex-col items-center">
+        <!-- Top Row of Teams -->
+        <div class="flex w-full lg:w-10/12 justify-center gap-8">
+          <!-- Projektteam -->
+          <div class="card w-full md:w-1/2 p-5">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="users" class="h-5 w-5 shyftplan-purple"></i>
+                <span>Projektteam</span>
+              </h3>
+              <button class="p-2 rounded-lg bg-shyftplan-purple text-white hover:bg-[#5b21b6] transition-colors" data-action="open-team-modal" data-team-key="projectTeam"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+            </div>
+            <ul id="project-team-list" class="space-y-2 text-sm"></ul>
+          </div>
+          <!-- shyftplan Team -->
+          <div class="card w-full md:w-1/2 p-5">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="handshake" class="h-5 w-5 shyftplan-purple"></i>
+                <span>shyftplan Team</span>
+              </h3>
+              <button class="p-2 rounded-lg bg-shyftplan-purple text-white hover:bg-[#5b21b6] transition-colors" data-action="open-team-modal" data-team-key="shyftplanTeam"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+            </div>
+            <ul id="shyftplan-team-list" class="space-y-2 text-sm"></ul>
+          </div>
+        </div>
+
+        <!-- T-Connector Structure -->
+        <div class="w-full lg:w-10/12 h-10 relative">
+            <div class="absolute bg-[#cbd5e1] top-1/2 left-1/4 w-1/2 h-[2px] -translate-y-1/2"></div>
+            <div class="absolute bg-[#cbd5e1] top-0 left-1/4 w-[2px] h-1/2 -translate-x-1/2"></div>
+            <div class="absolute bg-[#cbd5e1] top-0 right-1/4 w-[2px] h-1/2 translate-x-1/2"></div>
+            <div class="absolute bg-[#cbd5e1] top-1/2 left-1/2 w-[2px] h-1/2 -translate-x-1/2"></div>
+        </div>
+        
+        <!-- Trainerteam -->
+        <div class="card w-full md:w-3/4 lg:w-1/2 p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-semibold flex items-center gap-2">
+              <i data-lucide="graduation-cap" class="h-5 w-5 shyftplan-purple"></i>
+              <span>Trainerteam</span>
+            </h3>
+            <button class="p-2 rounded-lg bg-shyftplan-purple text-white hover:bg-[#5b21b6] transition-colors" data-action="open-team-modal" data-team-key="trainerTeam"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+          </div>
+          <ul id="trainer-team-list" class="space-y-2 text-sm"></ul>
+        </div>
+        <div class="connector-v h-5"></div>
+      </div>
+
+      <div class="relative">
+        <div class="connector-h w-full"></div>
+        <div id="areas-badge" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-slate-100 text-slate-600 text-xs font-semibold px-2 py-0.5 rounded-full border border-slate-200">Bereiche</div>
+      </div>
+
+      <div id="areas-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+  </main>
+
+  <!-- Re-usable Modal -->
+  <div id="modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+    <div class="card w-full max-w-2xl overflow-hidden">
+      <div class="px-5 py-3 border-b border-slate-200 flex items-center justify-between">
+        <h3 id="modal-title" class="font-semibold">Bearbeiten</h3>
+        <button id="modal-close" class="text-slate-500 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="modal-body" class="p-5 space-y-4 max-h-[60vh] overflow-y-auto"></div>
+      <div id="modal-footer" class="p-5 border-t border-slate-200 flex justify-end gap-2">
+        <!-- Footer buttons are added dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let state = getInitialState();
+
+      function getInitialState() {
+        return {
+          siteName: 'Hanau',
+          teams: {
+            projectTeam: {
+              name: 'Projektteam', icon: 'users', members: [
+                { id: 'm0', name: 'Florian Zang', role: 'Entscheidungsträger'},
+                { id: 'm1', name: 'Malin Heldt', role: 'Projektleitung' },
+                { id: 'm2', name: 'Christian Petrausch', role: 'Planung Endfertigung' },
+                { id: 'm3', name: 'Adrian Rikert', role: 'Planung Ziehfertigung' },
+                { id: 'm4', name: 'Beata Banach', role: 'SAP HR' },
+              ]
+            },
+            shyftplanTeam: {
+              name: 'shyftplan Team', icon: 'custom', members: [
+                { id: 's1', name: 'Maximilian Göbel', role: 'Project Consultant' },
+                { id: 's2', name: 'Piotr Domke', role: 'SAP Consultant Westernacher' },
+              ]
+            },
+            trainerTeam: {
+              name: 'Trainerteam', icon: 'graduation-cap', members: [
+                { id: 't1', name: 'Christian Petrausch', role: 'Trainer' },
+                { id: 't2', name: 'Adrian Rikert', role: 'Trainer' },
+                { id: 't3', name: 'Beata Banach', role: 'Trainer' },
+              ]
+            }
+          },
+          areas: [
+            { id: 'a1', name: 'Endfertigung', employees: 50, planners: 3 },
+            { id: 'a2', name: 'Beizen', employees: 3, planners: 1 },
+            { id: 'a3', name: 'Ziehfertigung', employees: 55, planners: 2 },
+            { id: 'a4', name: 'Messlabor', employees: 10, planners: 2 },
+            { id: 'a5', name: 'Warenannahme/Versand', employees: 15, planners: 2 },
+            { id: 'a6', name: 'Techn. Dienste', employees: 7, planners: 2 },
+            { id: 'a7', name: 'Zerspanung', employees: 6, planners: 2 },
+            { id: 'a8', name: 'Premiumbereich', employees: 10, planners: 2 },
+            { id: 'a9', name: 'Bündelraum', employees: 15, planners: 2 },
+          ]
+        };
+      }
+
+      // --- RENDER FUNCTIONS ---
+      function renderAll() {
+        renderSummaries();
+        renderOrgChart();
+      }
+
+      function renderSummaries() {
+        const totals = calcTotals();
+        document.getElementById('header-site').textContent = state.siteName;
+        document.getElementById('summary-site').textContent = state.siteName;
+        document.getElementById('summary-employees').textContent = String(totals.employees);
+        document.getElementById('summary-planners').textContent = String(totals.planners);
+        const badge = document.getElementById('areas-badge');
+        if (badge) badge.textContent = `${state.areas.length} Bereiche`;
+      }
+
+      function calcTotals() {
+        return {
+          employees: state.areas.reduce((s, a) => s + (Number(a.employees) || 0), 0),
+          planners: state.areas.reduce((s, a) => s + (Number(a.planners) || 0), 0)
+        };
+      }
+
+      function renderOrgChart() {
+        const projectUl = document.getElementById('project-team-list');
+        const shyftplanUl = document.getElementById('shyftplan-team-list');
+        const trainerUl = document.getElementById('trainer-team-list');
+        const areasGrid = document.getElementById('areas-grid');
+
+        projectUl.innerHTML = state.teams.projectTeam.members.map(m => memberLi(m)).join('');
+        shyftplanUl.innerHTML = state.teams.shyftplanTeam.members.map(m => memberLi(m)).join('');
+        trainerUl.innerHTML = state.teams.trainerTeam.members.map(m => memberLi(m)).join('');
+        
+        areasGrid.innerHTML = state.areas.map(a => areaCard(a)).join('') + addAreaButtonHtml();
+        
+        lucide.createIcons();
+      }
+
+      function memberLi(m) {
+        return `<li class="flex items-center gap-2">
+          <i data-lucide="user" class="h-4 w-4 text-slate-400"></i>
+          <span>${escapeHtml(m.name)}</span>
+          <span class="ml-auto text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">${escapeHtml(m.role)}</span>
+        </li>`;
+      }
+
+      function areaCard(a) {
+        return `<button class="card p-6 text-left hover:shadow-lg transition w-full h-full" data-action="open-area-modal" data-area-id="${a.id}">
+          <h3 class="text-lg font-semibold text-slate-800">${escapeHtml(a.name)}</h3>
+          <div class="flex items-baseline space-x-4 mt-2 text-slate-600">
+            <span class="flex items-center text-sm"><i data-lucide="users" class="h-4 w-4 mr-2"></i>${a.employees} Mitarbeiter</span>
+            <span class="flex items-center text-sm"><i data-lucide="user-cog" class="h-4 w-4 mr-2"></i>${a.planners} Planer</span>
+          </div>
+        </button>`;
+      }
+      
+      function addAreaButtonHtml() {
+        // HINWEIS: Der Button hat p-6, um dem Padding der Bereichskarten zu entsprechen.
+        // Die Icon- (h-7 w-7) und Textgrößen (text-sm) wurden angepasst,
+        // damit die gesamte Inhaltshöhe mit den anderen Karten übereinstimmt,
+        // was eine konsistente Größe im gesamten Raster gewährleistet.
+        return `<button class="add-area-btn card h-full p-6" data-action="add-area">
+                <div class="text-center">
+                    <i data-lucide="plus" class="h-7 w-7 mx-auto"></i>
+                    <span class="mt-2 block font-semibold text-sm">Neuer Bereich</span>
+                </div>
+            </button>`;
+      }
+
+      // --- MODAL LOGIC ---
+      const modal = document.getElementById('modal');
+      const modalTitle = document.getElementById('modal-title');
+      const modalBody = document.getElementById('modal-body');
+      const modalFooter = document.getElementById('modal-footer');
+      
+      let currentSaveHandler = null;
+
+      function openModal(title, bodyHtml, footerHtml, onSave) {
+        modalTitle.textContent = title;
+        modalBody.innerHTML = bodyHtml;
+        modalFooter.innerHTML = footerHtml;
+        currentSaveHandler = onSave;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        lucide.createIcons();
+      }
+      
+      function closeModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        currentSaveHandler = null;
+      }
+      
+      modal.addEventListener('click', (e) => {
+        if (e.target.closest('#modal-close') || e.target.closest('#modal-cancel')) {
+          closeModal();
+        }
+        if (e.target.closest('#modal-save')) {
+          if (typeof currentSaveHandler === 'function') {
+            currentSaveHandler();
+          }
+          closeModal();
+          renderAll();
+        }
+      });
+
+      function openSiteModal() {
+        openModal(
+          'Standort bearbeiten',
+          `<label class="detail-label">Standortname
+            <input id="site-name-input" value="${escapeHtml(state.siteName)}" class="detail-input mt-1" />
+          </label>`,
+          `<button id="modal-cancel" class="btn border border-slate-300">Abbrechen</button>
+           <button id="modal-save" class="btn bg-shyftplan-purple text-white">Speichern</button>`,
+          () => {
+            state.siteName = document.getElementById('site-name-input').value.trim() || state.siteName;
+          }
+        );
+      }
+
+      function openAreaModal(areaId) {
+        const area = state.areas.find(a => a.id === areaId);
+        openModal(
+          'Bereich bearbeiten',
+          `<div class="space-y-4">
+            <div><label class="detail-label">Name</label><input id="area-name" value="${escapeHtml(area.name)}" class="detail-input" /></div>
+            <div class="grid grid-cols-2 gap-4">
+              <div><label class="detail-label">Mitarbeiter</label><input id="area-employees" type="number" value="${area.employees}" class="detail-input" /></div>
+              <div><label class="detail-label">Planer</label><input id="area-planners" type="number" value="${area.planners}" class="detail-input" /></div>
+            </div>
+          </div>`,
+           `<button class="btn btn-danger mr-auto" data-action="delete-area" data-area-id="${area.id}">Löschen</button>
+            <button id="modal-cancel" class="btn border border-slate-300">Abbrechen</button>
+            <button id="modal-save" class="btn bg-shyftplan-purple text-white">Speichern</button>`,
+          () => {
+            area.name = document.getElementById('area-name').value.trim() || area.name;
+            area.employees = Number(document.getElementById('area-employees').value) || 0;
+            area.planners = Number(document.getElementById('area-planners').value) || 0;
+          }
+        );
+      }
+      
+      function openTeamModal(teamKey) {
+          const team = state.teams[teamKey];
+          let membersHtml = team.members.map(member => `
+              <div class="bg-slate-50 p-3 rounded-lg" data-member-id="${member.id}">
+                  <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 items-end">
+                      <div class="sm:col-span-2"><label class="detail-label">Name</label><input class="detail-input member-name" type="text" value="${escapeHtml(member.name)}"></div>
+                      <div class="sm:col-span-2"><label class="detail-label">Rolle</label><input class="detail-input member-role" type="text" value="${escapeHtml(member.role)}"></div>
+                      <div class="sm:col-span-1"><button class="btn btn-danger w-full" data-action="delete-member">Löschen</button></div>
+                  </div>
+              </div>`).join('');
+
+          openModal(
+            `${team.name} verwalten`,
+            `<div id="team-members-list" class="space-y-2">${membersHtml}</div>
+             <button class="btn btn-secondary mt-4 w-full" data-action="add-member"><i data-lucide="plus" class="h-4 w-4 mr-2"></i>Mitglied hinzufügen</button>`,
+            `<button id="modal-cancel" class="btn border border-slate-300">Abbrechen</button>
+             <button id="modal-save" class="btn bg-shyftplan-purple text-white">Speichern</button>`,
+            () => {
+              const updatedMembers = [];
+              modalBody.querySelectorAll('[data-member-id]').forEach(div => {
+                  updatedMembers.push({
+                      id: div.dataset.memberId,
+                      name: div.querySelector('.member-name').value,
+                      role: div.querySelector('.member-role').value,
+                  });
+              });
+              state.teams[teamKey].members = updatedMembers;
+            }
+          );
+      }
+
+      // --- EVENT BINDING ---
+      document.addEventListener('click', (e) => {
+        const target = e.target.closest('[data-action]');
+        if (!target) return;
+
+        const { action, teamKey, areaId } = target.dataset;
+
+        if (action === 'open-site-modal') openSiteModal();
+        if (action === 'open-team-modal') openTeamModal(teamKey);
+        if (action === 'open-area-modal') openAreaModal(areaId);
+        
+        if (action === 'delete-area') {
+            const areaToDelete = state.areas.find(a => a.id === areaId);
+            // NOTE: Using a custom modal for confirmation would be better in a real app,
+            // as alert/confirm can be blocked. This is a simplification.
+            if (confirm(`Möchten Sie den Bereich "${areaToDelete.name}" wirklich löschen?`)) {
+                state.areas = state.areas.filter(a => a.id !== areaId);
+                closeModal();
+                renderAll();
+            }
+        }
+
+        if (action === 'add-area') {
+            const newArea = { id: `a-${Date.now()}`, name: 'Neuer Bereich', employees: 0, planners: 0 };
+            state.areas.push(newArea);
+            renderAll();
+        }
+
+        if (action === 'add-member') {
+            const list = document.getElementById('team-members-list');
+            const newId = `m-${Date.now()}`;
+            const newMemberHtml = document.createElement('div');
+            newMemberHtml.className = "bg-slate-50 p-3 rounded-lg";
+            newMemberHtml.dataset.memberId = newId;
+            newMemberHtml.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 items-end">
+                   <div class="sm:col-span-2"><label class="detail-label">Name</label><input class="detail-input member-name" type="text" value="Neues Mitglied"></div>
+                   <div class="sm:col-span-2"><label class="detail-label">Rolle</label><input class="detail-input member-role" type="text" value="Neue Rolle"></div>
+                   <div class="sm:col-span-1"><button class="btn btn-danger w-full" data-action="delete-member">Löschen</button></div>
+                </div>`;
+            list.appendChild(newMemberHtml);
+            lucide.createIcons();
+        }
+
+        if (action === 'delete-member') {
+            target.closest('[data-member-id]').remove();
+        }
+      });
+      
+      function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;','\'':'&#39;'}[c]||c)); }
+      
+      // Initial Load
+      renderAll();
+    });
+  </script>
+</body>
+</html>
+
+
+

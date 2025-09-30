@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP HCM & shyftplan Integration: Personalisierte Tour</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.5s ease-in-out;
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .custom-checkbox:checked {
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+            background-color: #9865f6;
+            border-color: #9865f6;
+        }
+
+        #subtitle-container, #step-details-container, #summary-slide-container {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 40%, transparent 70%);
+            pointer-events: none;
+        }
+        #progress-bar-inner {
+            transition: width 0.3s linear;
+            background-color: #9865f6;
+        }
+        #narrator-image {
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out, border-color 0.5s ease-in-out;
+        }
+        .nav-button {
+            background-color: rgba(0,0,0,0.4);
+            border-radius: 9999px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .nav-button:hover {
+            background-color: rgba(0,0,0,0.7);
+        }
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        #step-details-container, #summary-slide-container {
+            background-color: rgba(37, 72, 111, 0.85); /* #25486f with opacity */
+            backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            border: 1px solid rgba(174, 199, 248, 0.3); /* #aec7f8 with opacity */
+        }
+        .intro-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @media (max-width: 767px) {
+            .effort-container .phase-detail-card {
+                top: 4rem;
+                transform: translate(-50%, 0) scale(0.95);
+                max-height: calc(100vh - 5rem);
+            }
+            .effort-container .phase-detail-card.is-active { transform: translate(-50%, 0) scale(1); }
+        }
+
+        /* --- Integration Scope & Effort Styles --- */
+        .scope-container ::-webkit-scrollbar, .effort-container ::-webkit-scrollbar, .test-catalog-container ::-webkit-scrollbar { display: none; }
+        .scope-container, .effort-container, .test-catalog-container { -ms-overflow-style: none; scrollbar-width: none; }
+        .scope-scroll-container { scroll-snap-type: x mandatory; scroll-behavior: smooth; }
+        .scope-scroll-container > div { scroll-snap-align: center; }
+        .scope-card, .effort-card {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .scope-card.is-visible, .effort-card.is-visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .scope-container details .details-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        .scope-container details[open] .details-content { max-height: 500px; }
+        .scope-container summary { list-style: none; }
+        .scope-container summary::-webkit-details-marker { display: none; }
+        .scope-container .plus-minus-icon { transition: transform 0.3s ease-in-out; }
+        .scope-container details[open] summary .plus-minus-icon { transform: rotate(45deg); }
+        .effort-container .phase-detail-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            z-index: 60; /* Higher than the modal's z-index (50) */
+            width: 90%;
+            max-width: 42rem; /* 672px */
+            max-height: 85vh;
+            transform: translate(-50%, -50%) scale(0.95);
+            background-color: rgba(51, 65, 85, 0.95); /* bg-slate-700/95 */
+            backdrop-filter: blur(8px);
+            border-radius: 1rem; /* rounded-2xl */
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); /* shadow-2xl */
+            border: 1px solid #4b5563; /* border-slate-500 */
+            display: flex;
+            flex-direction: column;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease-in-out; pointer-events: none;
+        }
+        .effort-container .phase-detail-card.is-active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+        .effort-container .detail-content-scroll::-webkit-scrollbar { width: 5px; }
+        .effort-container .detail-content-scroll::-webkit-scrollbar-track { background: transparent; }
+        .effort-container .detail-content-scroll::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 20px; }
+        .test-catalog-container .details-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        .test-catalog-container .is-expanded .details-content { max-height: 500px; }
+        .test-catalog-container .chevron-icon { transition: transform 0.3s ease-in-out; }
+        .test-catalog-container .is-expanded .chevron-icon { transform: rotate(180deg); }
+        .speed-button { color: #d1d5db; }
+        .speed-button.active { background-color: rgba(255,255,255,0.2); color: white; }
+
+        /* --- Video Loop Styles --- */
+        #video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #video-container video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        #video-container video.active {
+            opacity: 1;
+        }
+        #video-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            backdrop-filter: blur(4px);
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="">
+
+    <div id="start-screen" class="hidden w-full p-4 flex flex-col items-center justify-center min-h-screen">
+        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-2xl w-full max-w-4xl text-center relative">
+            <div class="flex justify-center items-center gap-6 h-6 sm:h-14 mx-auto mb-8">
+                <img id="start-screen-customer-logo" src="" alt="Kundenlogo" class="h-full w-auto object-contain">
+                <span class="text-2xl font-light text-slate-300">x</span>
+                <img id="start-screen-shyftplan-logo" src="" alt="Shyftplan Logo" class="h-full w-auto object-contain">
+            </div>
+
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-slate-900">Ein schlanker Integrationsprozess</h1>
+            <p class="text-base sm:text-lg md:text-xl text-slate-600 mb-12">Entdecken Sie unseren klaren, strukturierten Ansatz für <span id="start-screen-customer-name"></span>.</p>
+            
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                 <button id="play-button" class="bg-[#9865f6] hover:bg-[#77a0f6] text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-300 ease-in-out transform hover:scale-105 w-full sm:w-auto">
+                    Tour starten
+                </button>
+                <button id="start-skip-to-end-button" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-3 px-8 rounded-lg text-lg transition duration-300 ease-in-out w-full sm:w-auto">
+                    Zur Übersicht
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tour-wrapper" class="hidden">
+        <div class="min-h-screen flex items-center justify-center p-4">
+            <div id="tour-container" class="w-full max-w-md md:max-w-6xl mx-auto bg-black rounded-xl shadow-2xl overflow-hidden transition-opacity duration-500">
+                <div class="relative aspect-[9/16] md:aspect-video">
+                    <div id="video-container">
+                        <!-- Video 1 (spielt nur einmal am Anfang) -->
+                        <video class="active" playsinline muted>
+                            <source src="assets/videos/integration_video_1.mp4" type="video/mp4">
+                            Ihr Browser unterstützt das Video-Tag nicht.
+                        </video>
+                        <!-- Video 2 (Teil des Loops) -->
+                        <video playsinline muted>
+                            <source src="assets/videos/integration_video_2.mp4" type="video/mp4">
+                            Ihr Browser unterstützt das Video-Tag nicht.
+                        </video>
+                        <!-- Video 3 (Teil des Loops) -->
+                        <video playsinline muted>
+                            <source src="assets/videos/integration_video_3.mp4" type="video/mp4">
+                            Ihr Browser unterstützt das Video-Tag nicht.
+                        </video>
+                        <!-- Video 4 (Teil des Loops) -->
+                        <video playsinline muted>
+                            <source src="assets/videos/integration_video_4.mp4" type="video/mp4">
+                            Ihr Browser unterstützt das Video-Tag nicht.
+                        </video>
+                        <!-- Video 5 (Teil des Loops) -->
+                        <video playsinline muted>
+                            <source src="assets/videos/integration_video_5.mp4" type="video/mp4">
+                            Ihr Browser unterstützt das Video-Tag nicht.
+                        </video>
+                    </div>
+                    <div class="video-overlay"></div>
+
+                    <div id="intro-overlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center text-center p-8 z-20 transition-opacity duration-1000">
+                        <div class="bg-white/[.75] backdrop-blur-md p-6 md:p-8 rounded-2xl shadow-lg flex flex-col items-center">
+                            <div class="flex justify-center items-center gap-6 h-6 md:h-16 mx-auto mb-6">
+                               <img id="intro-overlay-customer-logo" src="" alt="Kundenlogo" class="h-full w-auto object-contain">
+                               <span class="text-3xl font-light text-slate-400">x</span>
+                               <img id="intro-overlay-shyftplan-logo" src="" alt="Shyftplan Logo" class="h-full w-auto object-contain">
+                            </div>
+                            <h1 class="text-2xl sm:text-4xl md:text-5xl font-bold text-slate-900">SAP HCM Integration</h1>
+                            <p class="text-base sm:text-lg md:text-xl text-slate-600 mt-2">Ein optimierter Prozess für <span id="intro-overlay-customer-name"></span></p>
+                        </div>
+                    </div>
+
+                    <div class="absolute top-4 left-4 flex gap-2 z-50">
+                        <button id="overview-button" class="bg-black/50 backdrop-blur-sm p-3 rounded-full flex items-center justify-center w-10 h-10 md:w-12 md:h-12 hover:bg-black/75 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 text-white" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                        </button>
+                         <button id="skip-to-end-button" class="bg-black/50 backdrop-blur-sm p-3 rounded-full flex items-center justify-center w-10 h-10 md:w-12 md:h-12 hover:bg-black/75 transition z-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                    </div>
+                    
+                    <div class="absolute inset-0 flex items-start sm:items-center justify-center p-4 pt-20 sm:pt-4 sm:p-6 md:p-8 z-30 pointer-events-none">
+                        <div id="step-details-container" class="opacity-0 max-w-4xl w-full hidden p-4 md:p-8 pointer-events-auto text-white max-h-full overflow-y-auto"></div>
+                        <div id="summary-slide-container" class="opacity-0 w-full hidden p-2 md:p-4 pointer-events-auto text-white max-h-full overflow-y-auto"></div>
+                    </div>
+                    
+                    <div class="absolute inset-x-0 bottom-0 p-2 sm:p-4 md:p-6 z-40 pointer-events-none text-white">
+                        <div class="flex items-center gap-2 sm:gap-4 pointer-events-auto">
+                            <img id="narrator-image" src="" onerror="this.onerror=null;this.src='https://placehold.co/150x150/2d313d/aec7f8?text=Host';" alt="Narrator" class="flex-shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-full border-2 md:border-4 shadow-lg opacity-0 transform scale-90 object-cover">
+                            <div id="speed-controls" class="flex items-center bg-black/40 rounded-full p-1 gap-1">
+                                <button data-speed="1" class="speed-button active w-8 h-8 rounded-full text-xs font-bold transition">1x</button>
+                                <button data-speed="1.5" class="speed-button w-8 h-8 rounded-full text-xs font-bold transition">1.5x</button>
+                                <button data-speed="2" class="speed-button w-8 h-8 rounded-full text-xs font-bold transition">2x</button>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div id="subtitle-container" class="bg-black/50 backdrop-blur-sm p-3 md:p-4 rounded-lg"><p id="subtitle-text" class="text-base sm:text-lg md:text-xl font-small"></p></div>
+                            </div>
+                            <div id="navigation-buttons" class="flex flex-col sm:flex-row gap-2">
+                                <button id="prev-button" class="nav-button"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                                <button id="next-button" class="nav-button"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="progress-bar" class="absolute top-0 left-0 w-full h-1 md:h-2 bg-[#25486f]"><div id="progress-bar-inner" class="h-full"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="end-screen" class="hidden w-full p-4 flex flex-col items-center justify-center min-h-screen">
+        <div class="w-full max-w-4xl text-center shadow-2xl rounded-2xl">
+            <div class="bg-white rounded-t-2xl p-6 md:p-8">
+                <div class="flex justify-center items-center gap-6 h-6 sm:h-14 mx-auto mb-8">
+                    <img id="end-screen-customer-logo" src="" alt="Kundenlogo" class="h-full w-auto object-contain">
+                    <span class="text-2xl font-light text-slate-300">x</span>
+                    <img id="end-screen-shyftplan-logo" src="" alt="Shyftplan Logo" class="h-full w-auto object-contain">
+                </div>
+                <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-slate-900">Was möchten Sie als Nächstes erkunden?</h1>
+                <p class="text-base sm:text-lg md:text-xl text-slate-600 mb-8">Wählen Sie einen Bereich aus, um Details anzuzeigen, oder starten Sie die Tour erneut.</p>
+                <div id="end-screen-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+            <div class="bg-[#25486f] p-4 rounded-b-2xl">
+                <div class="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
+                    <img src="https://cdn.craft.cloud/0e1b5af0-6e20-4240-87c1-0d05dc22df37/assets/content/BB305EA6-048B-462F-81F6-DAEE5D5991AF.png" alt="TÜV Saarland Zertifikat" class="h-[4.5rem] w-[4.5rem] bg-white p-2 rounded-full object-contain">
+                    <img src="https://cdn.craft.cloud/0e1b5af0-6e20-4240-87c1-0d05dc22df37/assets/content/dsgvo-neu.png" alt="DSGVO Konform" class="h-[4.5rem] w-[4.5rem] bg-white p-2 rounded-full object-contain">
+                    <img src="https://cdn.craft.cloud/0e1b5af0-6e20-4240-87c1-0d05dc22df37/assets/content/logos/Made-Hosted-in-Germany.png" alt="Made & Hosted in Germany" class="h-[4.5rem] w-[4.5rem] bg-white p-2 rounded-full object-contain">
+                    <img src="https://cdn.craft.cloud/0e1b5af0-6e20-4240-87c1-0d05dc22df37/assets/content/SOC-2.png" alt="SOC 2 Compliant" class="h-[4.5rem] w-[4.5rem] bg-white p-2 rounded-full object-contain">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="slide-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start sm:items-center justify-center z-50 p-4 overflow-y-auto">
+        <div id="slide-modal-content-wrapper" class="bg-slate-800 border border-slate-600 text-white rounded-2xl p-6 md:p-8 shadow-2xl w-full max-w-5xl relative max-h-[90vh] overflow-y-auto">
+            <button id="close-modal-button" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 z-30"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const playButton = document.getElementById('play-button');
+        const endScreen = document.getElementById('end-screen');
+        const endScreenCards = document.getElementById('end-screen-cards');
+        const startScreen = document.getElementById('start-screen');
+        const startSkipToEndButton = document.getElementById('start-skip-to-end-button');
+        const tourContainer = document.getElementById('tour-container');
+        const subtitleText = document.getElementById('subtitle-text');
+        const subtitleContainer = document.getElementById('subtitle-container');
+        const progressBarInner = document.getElementById('progress-bar-inner');
+        const narratorImage = document.getElementById('narrator-image');
+        const stepDetailsContainer = document.getElementById('step-details-container');
+        const summarySlideContainer = document.getElementById('summary-slide-container');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const overviewButton = document.getElementById('overview-button');
+        const skipToEndButton = document.getElementById('skip-to-end-button');
+        const introOverlay = document.getElementById('intro-overlay');
+        const slideModal = document.getElementById('slide-modal');
+        const closeModalButton = document.getElementById('close-modal-button');
+        const modalContent = document.getElementById('modal-content');
+        const slideModalContentWrapper = document.getElementById('slide-modal-content-wrapper');
+        const speedControls = document.getElementById('speed-controls');
+
+        const tourWrapper = document.getElementById('tour-wrapper');
+
+        // List of all top-level screens
+        const screens = [startScreen, tourWrapper, endScreen, slideModal];
+
+        // Video Loop Elements
+        const videoContainer = document.getElementById('video-container');
+        const videos = videoContainer.querySelectorAll('video');
+
+        // Config & State
+        let config = {};
+        let steps = [];
+        let playbackRate = 1;
+        let currentVideoIndex = 0;
+        const FADE_DURATION_SECONDS = 1.5;
+        const videoTimeUpdateHandlers = new Map(); // To store handlers for removal
+        let currentStepIndex = 0, currentNarrativeIndex = 0, narrativeTimeout, isAutoPlaying = false;
+        
+        const icons = {
+            overview: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>`,
+            preparation: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zM5.25 6.75c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h13.5c.621 0 1.125-.504 1.125-1.125V7.875c0-.621-.504-1.125-1.125-1.125H5.25z" clip-rule="evenodd" /><rect x="7.5" y="9" width="9" height="2.5" rx="0.5" /></svg>`,
+            installation: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>`,
+            configuration: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /></svg>`,
+            approval: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
+            scope: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 8.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6A2.25 2.25 0 0115.75 3.75h2.25A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25A2.25 2.25 0 0113.5 8.25V6zM13.5 15.75A2.25 2.25 0 0115.75 13.5h2.25a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>`,
+            testing: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm0 13.036h.008v.008h-.008v-.008z" /></svg>`,
+            replay: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>`,
+            effort: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" /></svg>`,
+            components: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>`,
+            delivery: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9.75l-9-5.25" /></svg>`,
+            prerequisites: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>`,
+            employeeData: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>`
+        };
+
+        function createSteps(cfg) {
+            return [
+                { isIntro: true, narrator: 'ae', narrative: [
+                    { text: `Hallo ${cfg.customerContact}, herzlich willkommen. Schön, dass Sie hier sind.`, duration: 5000 },
+                    { text: `Wir zeigen Ihnen heute, wie klar und partnerschaftlich unsere SAP-Integration abläuft.`, duration: 5000 }
+                ]},
+                { narrator: 'ae', narrative: [{ text: `Dafür übergebe ich an meinen Kollegen ${cfg.pl.name.split(' ')[0]}.`, duration: 3000 }, { text: `Er ist Ihr Projektleiter und wird diesen Prozess gemeinsam mit Ihnen gestalten.`, duration: 5000 }] },
+                { title: "Überblick", narrator: 'pl', isSimpleSummary: true, narrative: [{ text: `Vielen Dank, ${cfg.ae.name.split(' ')[0]}. Auch von mir ein herzliches Willkommen! Beginnen wir mit einem Blick auf die Reise.`, duration: 6000 }] },
+                {
+                    title: "1. Vorbereitung", narrator: 'pl', icon: icons.preparation,
+                    details: { weProvide: ["Detaillierter Projektplan", "Toolkit mit Systemanforderungen", "Funktionaler Fragebogen"], youHandle: ["Technischen Fragebogen beantworten", "BTP & SAP-Setup sicherstellen", "Systemzugriff bereitstellen"], meetings: "Integrations-Kick-off-Session" },
+                    narrative: [{ text: "Wir beginnen mit der Vorbereitung...", duration: 4000 }, { text: "...und definieren gemeinsam den Umfang der Integration.", duration: 5000 }]
+                },
+                { narrator: 'pl', isIntegrationScope: true, scopeModuleIndex: -1, narrative: [{ text: "Werfen wir nun einen Blick auf die einzelnen Module des Integrationsumfangs.", duration: 4000 }] },
+                { title: "Scope: Stammdaten", narrator: 'pl', isIntegrationScope: true, scopeModuleIndex: 0, narrative: [{ text: "Wir beginnen mit den Grundlagen: Stammdaten wie Standorte und Arbeitsbereiche werden aus SAP übernommen.", duration: 6000 }] },
+                { title: "Scope: Personal", narrator: 'pl', isIntegrationScope: true, scopeModuleIndex: 1, narrative: [{ text: "Als Nächstes synchronisieren wir alle relevanten Mitarbeiterdaten, inklusive Zeitkonten.", duration: 6000 }] },
+                { title: "Scope: Schichtdaten", narrator: 'pl', isIntegrationScope: true, scopeModuleIndex: 2, narrative: [{ text: "Danach fließen relevante Schichtdaten wie Vertretungen zurück an SAP.", duration: 6000 }] },
+                { title: "Scope: Abwesenheiten", narrator: 'pl', isIntegrationScope: true, scopeModuleIndex: 3, narrative: [{ text: "Zuletzt werden Abwesenheiten bidirektional zwischen beiden Systemen synchronisiert.", duration: 6000 }] },
+                {
+                    title: "Der Projektplan", narrator: 'pl', isProjectPlan: true,
+                    narrative: [{ text: "Dieser Umfang wird in einem klaren Projektplan abgebildet. Die Hauptaktivitäten liegen bei uns, um Ihr IT-Team zu entlasten.", duration: 8000 }]
+                },
+                {
+                    title: "2. Installation", narrator: 'pl', icon: icons.installation, 
+                    details: { weProvide: ["SAP-Transporte & Dokumentation", "Fachkundige Anleitung beim Import"], youHandle: ["Transporte in DEV/QAS importieren", "Technische Verbindungstests"], meetings: "Meeting für Verbindungsaufbau & Test" },
+                    narrative: [{ text: "Als Nächstes folgt eine reibungslose Installation.", duration: 4000 }, { text: "Wir liefern die SAP-Transporte, Ihr Team importiert sie und wir testen die Verbindung gemeinsam.", duration: 7000 }]
+                },
+                {
+                    title: "Technische Komponenten", narrator: 'pl', icon: icons.delivery, isComponentsView: true,
+                    narrative: [
+                        { text: "Werfen wir einen Blick auf die technischen Komponenten, die wir bereitstellen.", duration: 4000 },
+                        { 
+                            text: "Zuerst das robuste Interface-Programm für Ihr HCM-Backend.", 
+                            duration: 5000, 
+                            action: (container) => {
+                                const trigger = container.querySelectorAll('.collapsible-trigger')[0];
+                                const content = trigger?.nextElementSibling;
+                                if (trigger && content && !content.classList.contains('open')) {
+                                    trigger.click();
+                                }
+                            } 
+                        },
+                        { 
+                            text: "Und dann die standardisierten iFlows für die BTP CPI.", 
+                            duration: 5000, 
+                            action: (container) => {
+                                const trigger = container.querySelectorAll('.collapsible-trigger')[1];
+                                const content = trigger?.nextElementSibling;
+                                if (trigger && content && !content.classList.contains('open')) {
+                                    trigger.click();
+                                }
+                            } 
+                        }
+                    ]
+                },
+                {
+                    title: "3. Konfiguration", narrator: 'pl', icon: icons.configuration,
+                    details: { weProvide: ["Vorkonfiguriertes Paket", "Kollaborative Anpassung zusammen mit unserem Schnittstellen-Experten"], youHandle: ["Konfigurationspräferenzen unterstützen", "Mapping von Abwesenheitstypen usw."], meetings: "Arbeitssitzungen zur Anpassung" },
+                    narrative: [{ text: "Jetzt konfigurieren wir die Schnittstelle.", duration: 4000 }, { text: "Wir beginnen mit einem vorkonfigurierten Paket und passen es dann gemeinsam an Ihre genauen Bedürfnisse an.", duration: 7000 }]
+                },
+                {
+                    title: "4. Testen", narrator: 'pl', icon: icons.testing,
+                    details: { weProvide: ["Maßgeschneiderter Testkatalog (>100 Fälle)", "Zugang zum Datadog-Monitoring"], youHandle: ["Testdaten & -fälle vorbereiten", "Schnittstellentests durchführen"], meetings: "Gemeinsame Testsitzungen" },
+                    narrative: [{ text: "Gemeinsam stellen wir sicher, dass alles perfekt ist.", duration: 4000 }, { text: "Wir stellen unseren maßgeschneiderten Testkatalog zur Verfügung, und Ihr Team validiert die Schnittstelle mit unserer vollen Unterstützung.", duration: 7000 }]
+                },
+                {
+                    title: "Gründliche Tests", narrator: 'pl', isTestCatalog: true,
+                    narrative: [{ text: "Unser interaktiver Testkatalog gibt Ihnen jederzeit Sicherheit über den Fortschritt.", duration: 7000 }]
+                },
+                {
+                    title: "5. Abnahme & Go-Live", narrator: 'pl', icon: icons.approval,
+                    details: { weProvide: ["Übergabedokumentation", "Schnittstellenschulung"], youHandle: ["Vollständigkeit der Übergabe bestätigen", "Freigabe für den Cutover erteilen"], meetings: "Schulung & Cutover-Support" },
+                    narrative: [{ text: "Schließlich, nach der Schulung und Ihrer Freigabe...", duration: 4000 }, { text: "...unterstützen wir Sie beim Übergang zu Ihrem Live-Produktivsystem.", duration: 6000 }]
+                },
+                {
+                    title: "Aufwandsübersicht", narrator: 'pl', isEffortSummary: true,
+                    narrative: [{ text: "Wie Sie sehen, werden die Aufwände bei Ihnen auf das Minimum reduziert.", duration: 7000 }]
+                },
+                {
+                    title: "Zusammenfassung", narrator: 'ae', isDetailedSummary: true,
+                    narrative: [{ text: `Vielen Dank, ${cfg.pl.name.split(' ')[0]}. Sie sehen, ${cfg.customerContact}, es ist ein klarer, partnerschaftlicher Prozess.`, duration: 7000 }, { text: "Wir sorgen für minimale Aufwände auf Ihrer Seite und eine erfolgreiche Integration.", duration: 5000 }]
+                }
+            ];
+        }
+        
+        async function playNarrativeLine(stepIdx, narrativeIdx) {
+            clearTimeout(narrativeTimeout);
+            const step = steps[stepIdx];
+            const item = step.narrative[narrativeIdx];
+            const currentNarrator = config[step.narrator];
+            
+            narratorImage.src = currentNarrator.image;
+            narratorImage.style.borderColor = step.narrator === 'ae' ? '#77a0f6' : '#ff8eb7';
+
+            narratorImage.classList.remove('opacity-0', 'scale-90');
+
+            subtitleContainer.style.opacity = 0;
+
+            if (item.action) {
+                item.action(summarySlideContainer.classList.contains('hidden') ? stepDetailsContainer : summarySlideContainer);
+            }
+
+            if (item.text.trim()) {
+                await new Promise(r => setTimeout(r, 200));
+                subtitleText.innerHTML = `${currentNarrator.name.split(' ')[0]}: ${item.text}`;
+                subtitleContainer.style.opacity = 1;
+            }
+
+            updateProgressBar();
+            
+            if (isAutoPlaying) {
+                narrativeTimeout = setTimeout(() => {
+                    if (narrativeIdx < step.narrative.length - 1) {
+                        currentNarrativeIndex++;
+                        playNarrativeLine(stepIdx, currentNarrativeIndex);
+                    } else if (stepIdx < steps.length - 1) {
+                        if (step.isIntro) introOverlay.classList.add('intro-hidden');
+                        goToStep(stepIdx + 1);
+                    } else {
+                        showEndScreen();
+                    }
+                }, item.duration / playbackRate);
+            }
+        }
+
+        function getIntegrationScopeHTML() {
+            return `
+            <div class="scope-container w-full h-full flex flex-col items-center justify-center p-0 md:p-4 text-white">
+                <div class="w-full max-w-7xl h-full flex flex-col">
+                    <header class="w-full p-4 rounded-t-2xl z-20 shrink-0">
+                        <div class="flex flex-col md:flex-row justify-between items-center">
+                            <div>
+                                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Vollständige Integration</h1>
+                                <p class="mt-1 text-base text-slate-300">Eine interaktive Reise durch die SAP & shyftplan Module.</p>
+                            </div>
+                            <div class="flex items-center space-x-4 md:space-x-6 mt-4 md:mt-0 p-3 bg-black/20 rounded-full border border-slate-400/30">
+                                <div class="flex items-center space-x-2" title="SAP nach shyftplan"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-[#9865f6]"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg><span class="hidden sm:inline text-sm font-medium">SAP &rarr; shyftplan</span></div>
+                                <div class="w-px h-5 bg-slate-500"></div>
+                                <div class="flex items-center space-x-2" title="shyftplan nach SAP"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-[#60a5fa]"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg><span class="hidden sm:inline text-sm font-medium">shyftplan &rarr; SAP</span></div>
+                                <div class="w-px h-5 bg-slate-500"></div>
+                                <div class="flex items-center space-x-2" title="Beide Richtungen"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-[#ff8eb7]"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg><span class="hidden sm:inline text-sm font-medium">Bidirektional</span></div>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="relative flex-grow w-full flex items-center mt-4">
+                        <main id="scope-main-container" class="scope-scroll-container flex-grow w-full flex items-center space-x-8 overflow-x-auto overflow-y-hidden py-8">
+                            <div class="w-2 sm:w-16 h-full flex-shrink-0"></div> <!-- Abstandshalter -->
+                            <!-- Modulkarten werden hier eingefügt -->
+                        </main>
+                        <button id="scope-scroll-left-btn" class="absolute top-1/2 -translate-y-1/2 left-0 z-10 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm shadow-lg flex items-center justify-center text-white hover:bg-white/30 disabled:opacity-0 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                        <button id="scope-scroll-right-btn" class="absolute top-1/2 -translate-y-1/2 right-0 z-10 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm shadow-lg flex items-center justify-center text-white hover:bg-white/30 disabled:opacity-0 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+                    </div>
+                </div>
+            </div>`;
+        }
+        
+        function getEffortSlideHTML() {
+            return `
+            <div class="effort-container w-full max-w-5xl mx-auto text-white">
+                <header class="text-center mb-6"><h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Übersicht der Integrationsaufwände</h1><p class="mt-2 text-base text-slate-300">Detaillierte Aufschlüsselung der IT-Aufwände für die SAP-HCM Integration.</p></header>
+                <main>
+                    <section>
+                        <div class="bg-black/20 p-6 rounded-2xl">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                                <div class="flex flex-col items-center text-center"><h2 class="text-lg sm:text-xl font-bold mb-4">Gesamtaufwand</h2>
+                                    <div class="relative w-40 h-40 sm:w-48 sm:h-48">
+                                        <svg class="w-full h-full" viewBox="0 0 36 36"><circle stroke="#77a0f6" stroke-width="3.5" fill="none" cx="18" cy="18" r="15.915" stroke-dasharray="10.76, 100" stroke-dashoffset="0" stroke-linecap="round"></circle><circle stroke="#9865f6" stroke-width="3.5" fill="none" cx="18" cy="18" r="15.915" stroke-dasharray="43.04, 100" stroke-dashoffset="-10.76" stroke-linecap="round"></circle><circle stroke="#ff8eb7" stroke-width="3.5" fill="none" cx="18" cy="18" r="15.915" stroke-dasharray="35.44, 100" stroke-dashoffset="-53.8" stroke-linecap="round"></circle></svg>
+                                        <div class="absolute inset-0 flex flex-col items-center justify-center"><span class="text-3xl sm:text-4xl font-extrabold">79</span><span class="text-sm font-medium text-slate-300">Stunden</span></div>
+                                    </div>
+                                    <div class="flex flex-col items-start space-y-2 mt-4"><div class="flex items-center space-x-2"><div class="w-3 h-3 rounded-full bg-[#77a0f6]"></div><span class="text-sm text-slate-200">IT-Projektleiter</span></div><div class="flex items-center space-x-2"><div class="w-3 h-3 rounded-full bg-[#9865f6]"></div><span class="text-sm text-slate-200">IT-Spezialist (für SAP Backend und BTP)</span></div><div class="flex items-center space-x-2"><div class="w-3 h-3 rounded-full bg-[#ff8eb7]"></div><span class="text-sm text-slate-200">HR-IT</span></div></div>
+                                </div>
+                                <div class="relative"><h3 class="text-xl font-bold mb-2">IT-Aufwände im Überblick</h3><p class="text-slate-300 mb-6 text-sm">Klicken Sie auf das Auge-Symbol, um die Details anzuzeigen.</p>
+                                    <div class="space-y-4">
+                                        <div class="group"><div class="flex justify-between items-center mb-1"><span class="font-medium text-slate-200">Phase 1: Vorbereitung</span><div class="flex items-center gap-x-3"><span class="font-bold">2.5 h</span><button data-phase-id="1" class="toggle-detail-button text-slate-400 hover:text-white transition p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button></div></div><div class="flex w-full h-2.5 rounded-full overflow-hidden bg-slate-600"><div style="width: 20%; background-color: #77a0f6;"></div><div style="width: 80%; background-color: #9865f6;"></div></div></div>
+                                        <div class="group"><div class="flex justify-between items-center mb-1"><span class="font-medium text-slate-200">Phase 2 & 3: Installation & Konfiguration</span><div class="flex items-center gap-x-3"><span class="font-bold">34 h</span><button data-phase-id="2" class="toggle-detail-button text-slate-400 hover:text-white transition p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button></div></div><div class="flex w-full h-2.5 rounded-full overflow-hidden bg-slate-600"><div style="width: 11.8%; background-color: #77a0f6;"></div><div style="width: 38.2%; background-color: #9865f6;"></div><div style="width: 50%; background-color: #ff8eb7;"></div></div></div>
+                                        <div class="group"><div class="flex justify-between items-center mb-1"><span class="font-medium text-slate-200">Phase 4: Testen</span><div class="flex items-center gap-x-3"><span class="font-bold">23 h</span><button data-phase-id="3" class="toggle-detail-button text-slate-400 hover:text-white transition p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button></div></div><div class="flex w-full h-2.5 rounded-full overflow-hidden bg-slate-600"><div style="width: 4.3%; background-color: #77a0f6;"></div><div style="width: 47.85%; background-color: #9865f6;"></div><div style="width: 47.85%; background-color: #ff8eb7;"></div></div></div>
+                                        <div class="group"><div class="flex justify-between items-center mb-1"><span class="font-medium text-slate-200">Phase 5: Abnahme & Go-Live</span><div class="flex items-center gap-x-3"><span class="font-bold">19 h</span><button data-phase-id="4" class="toggle-detail-button text-slate-400 hover:text-white transition p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button></div></div><div class="flex w-full h-2.5 rounded-full overflow-hidden bg-slate-600"><div style="width: 15.8%; background-color: #77a0f6;"></div><div style="width: 42.1%; background-color: #9865f6;"></div><div style="width: 42.1%; background-color: #ff8eb7;"></div></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+                <div id="details-container">
+                    <div id="detail-1" class="phase-detail-card p-6"><div class="flex-shrink-0"><div class="flex justify-between items-center"><h3 class="text-xl font-bold">Phase 1: Vorbereitung (2.5h)</h3><button data-phase-id="1" class="close-detail-button text-slate-400 hover:text-white transition p-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><p class="text-slate-300 my-2 text-sm">Aufgaben des Kundenteams in der initialen Projektphase.</p></div><div class="flex-grow overflow-y-auto detail-content-scroll pr-2"><div class="space-y-4 text-sm"><div><h4 class="font-bold text-[#77a0f6]">IT-Projektleiter (0.5h)</h4><ul class="list-disc list-outside pl-4 space-y-1 text-slate-300 mt-1"><li>Teilnahme am Kick-off & Projekt-Setup</li></ul></div><div><h4 class="font-bold text-[#9865f6]">IT-Specialist (2h)</h4><ul class="list-disc list-outside pl-4 space-y-1 text-slate-300 mt-1"><li>Technischen Fragebogen ausfüllen</li><li>Systemanforderungen prüfen (BTP/SAP)</li><li>Systemzugriff für shyftplan bereitstellen</li></ul></div></div></div></div>
+                    <div id="detail-2" class="phase-detail-card p-6"><div class="flex-shrink-0"><div class="flex justify-between items-center"><h3 class="text-xl font-bold">Phase 2 & 3: Installation & Konfiguration (34h)</h3><button data-phase-id="2" class="close-detail-button text-slate-400 hover:text-white transition p-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><p class="text-slate-300 my-2 text-sm">Kernaufgaben während der technischen Einrichtung.</p></div><div class="flex-grow overflow-y-auto detail-content-scroll pr-2"><div class="space-y-4 text-sm"><div><h4 class="font-bold text-[#77a0f6]">IT-Projektleiter (4h)</h4><ul class="list-disc list-outside pl-4 space-y-1 text-slate-300 mt-1"><li>Koordination der Meetings</li><li>Anforderungsabstimmung</li></ul></div><div><h4 class="font-bold text-[#9865f6]">IT-Spezialist (für SAP Backend und BTP) (13h)</h4><ul class="list-disc list-outside pl-4 space-y-1 text-slate-300 mt-1"><li>SAP-Transporte in DEV/QAS importieren</li><li>Technische Verbindungstests durchführen</li><li>Unterstützung bei Konfigurationsanpassungen</li></ul></div><div><h4 class="font-bold text-[#ff8eb7]">HR-IT (17h)</h4><ul class="list-disc list-outside pl-4 space-y-1 text-slate-300 mt-1"><li>Teilnahme an Konfigurations-Meeting</li><li>Definition von Mappings (z.B. Abwesenheiten)</li><li>Validierung der Konfigurationsdaten</li></ul></div></div></div></div>
+                    <div id="detail-3" class="phase-detail-card p-6"><div class="flex-shrink-0"><div class="flex justify-between items-center"><h3 class="text-xl font-bold">Phase 4: Testen (23h)</h3><button data-phase-id="3" class="close-detail-button text-slate-400 hover:text-white transition p-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><p class="text-slate-300 my-2 text-sm">Qualitätssicherung der Schnittstelle.</p></div><div class="flex-grow overflow-y-auto detail-content-scroll pr-2"><div class="space-y-4 text-sm"><div><h4 class="font-bold text-[#77a0f6]">IT-Projektleiter (1h)</h4><ul class="list-disc list-outside pl-4 space-y-1 text-slate-300 mt-1"><li>Koordination der Testphasen</li></ul></div><div><h4 class="font-bold text-[#9865f6]">IT-Spezialist (für SAP Backend und BTP) (11h)</h4><ul class="list-disc list-outside pl-4 space-y-1 text-slate-300 mt-1"><li>Technischer Support während der Tests</li><li>Fehlerbehebung</li></ul></div><div><h4 class="font-bold text-[#ff8eb7]">HR-IT (11h)</h4><ul class="list-disc list-outside pl-4 space-y-1 text-slate-300 mt-1"><li>Vorbereitung von Testdaten und -fällen</li><li>Durchführung der fachlichen Testfälle</li><li>Dokumentation der Testergebnisse</li></ul></div></div></div></div>
+                    <div id="detail-4" class="phase-detail-card p-6"><div class="flex-shrink-0"><div class="flex justify-between items-center"><h3 class="text-xl font-bold">Phase 5: Abnahme & Go-Live (19h)</h3><button data-phase-id="4" class="close-detail-button text-slate-400 hover:text-white transition p-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><p class="text-slate-300 my-2 text-sm">Finale Schritte zur Produktivsetzung.</p></div><div class="flex-grow overflow-y-auto detail-content-scroll pr-2"><div class="space-y-4 text-sm"><div><h4 class="font-bold text-[#77a0f6]">IT-Projektleiter (3h)</h4><ul class="list-disc list-outside pl-4 space-y-1 text-slate-300 mt-1"><li>Go-Live-Planung und Koordination</li><li>Abstimmung des Cutover-Plans</li></ul></div><div><h4 class="font-bold text-[#9865f6]">IT-Spezialist (für SAP Backend und BTP) (8h)</h4><ul class="list-disc list-outside pl-4 space-y-1 text-slate-300 mt-1"><li>Technischer Support beim Cutover</li><li>Monitoring in der Hypercare-Phase</li></ul></div><div><h4 class="font-bold text-[#ff8eb7]">HR-IT (8h)</h4><ul class="list-disc list-outside pl-4 space-y-1 text-slate-300 mt-1"><li>Durchführung der Endabnahme (UAT)</li><li>Bestätigung der Übergabedokumentation</li><li>Erteilung der finalen Go-Live-Freigabe</li></ul></div></div></div></div>
+                </div>
+            </div>`;
+        }
+        
+        function getTestCatalogHTML() {
+            return `
+            <div class="test-catalog-container w-full max-w-6xl mx-auto text-white">
+                <header class="mb-8"><h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Testkatalog (Vorschau – 100+ Testfälle)</h1><p class="mt-2 text-base text-slate-300">Live-Überblick über den Testfortschritt der SAP-HCM Integration.</p></header>
+                <section id="stats-dashboard" class="mb-8 p-6 bg-black/20 rounded-2xl">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 items-center">
+                        <div class="col-span-2 md:col-span-1"><h2 class="text-lg font-bold mb-2">Gesamtfortschritt</h2><div class="w-full bg-slate-600 rounded-full h-4"><div id="progress-bar-inner-test" class="bg-green-500 h-4 rounded-full" style="width: 0%;"></div></div><p id="progress-text-test" class="text-center text-sm font-semibold text-slate-300 mt-2">0% abgeschlossen</p></div>
+                        <div class="text-center p-3 md:p-4 bg-slate-700/50 rounded-lg"><p class="text-2xl md:text-3xl font-bold" id="total-tests">0</p><p class="text-xs md:text-sm font-medium text-slate-300">Tests Gesamt</p></div>
+                        <div class="text-center p-3 md:p-4 bg-green-900/30 rounded-lg"><p class="text-2xl md:text-3xl font-bold text-green-400" id="passed-tests">0</p><p class="text-xs md:text-sm font-medium text-green-400">Bestanden</p></div>
+                        <div class="text-center p-3 md:p-4 bg-red-900/30 rounded-lg"><p class="text-2xl md:text-3xl font-bold text-red-400" id="failed-tests">0</p><p class="text-xs md:text-sm font-medium text-red-400">Fehlgeschlagen</p></div>
+                    </div>
+                </section>
+                <section class="mb-6">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="relative flex-grow"><input type="search" id="search-input" placeholder="Suche nach ID, Komponente oder Szenario..." class="w-full pl-10 pr-4 py-3 border border-slate-600 bg-slate-700 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-purple-400 transition text-white"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></div></div>
+                        <div id="status-filters" class="flex items-center gap-2 flex-wrap"><button data-status="all" class="filter-button active font-semibold px-3 py-2 md:px-4 text-sm rounded-lg bg-slate-600 hover:bg-slate-500 transition">Alle</button><button data-status="success" class="filter-button font-semibold px-3 py-2 md:px-4 text-sm rounded-lg bg-slate-600 hover:bg-slate-500 transition">Bestanden</button><button data-status="failed" class="filter-button font-semibold px-3 py-2 md:px-4 text-sm rounded-lg bg-slate-600 hover:bg-slate-500 transition">Fehlgeschlagen</button><button data-status="pending" class="filter-button font-semibold px-3 py-2 md:px-4 text-sm rounded-lg bg-slate-600 hover:bg-slate-500 transition">Ausstehend</button></div>
+                    </div>
+                </section>
+                <main id="test-case-list" class="space-y-3 max-h-[40vh] overflow-y-auto pr-2"></main>
+                <div id="no-results" class="hidden text-center py-12"><p class="text-lg font-semibold text-slate-400">Keine Testfälle gefunden</p><p class="text-slate-500">Bitte passen Sie Ihre Such- oder Filterkriterien an.</p></div>
+            </div>`;
+        }
+
+        function getProjectPlanHTML() {
+            return `
+            <div class="project-plan-container">
+                <header class="text-center mb-12">
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Projektplan</h1>
+                    <p class="mt-2 text-base text-slate-300 max-w-2xl mx-auto">Der 16-Wochen-Überblick für die erfolgreiche Implementierung.</p>
+                </header>
+                <div class="relative max-w-5xl mx-auto">
+                    <div class="absolute top-0 left-1/2 w-0.5 h-full bg-slate-700 -ml-px" aria-hidden="true"></div>
+                    <div class="space-y-12">
+                        <div class="relative"><div class="absolute top-4 left-1/2 -translate-x-1/2 z-10"><div class="flex items-center justify-center w-10 h-10 bg-sky-500 rounded-full ring-8 ring-slate-800 text-white font-bold text-lg">1</div></div><div class="flex justify-between items-start"><div class="w-1/2 pr-8 text-right"><h2 class="text-xl font-bold text-white pt-2">Phase 1: Vorbereitung</h2><p class="text-slate-400 mb-4 text-sm">(Woche 1-4)</p><h4 class="font-semibold text-sky-400">shyftplan</h4><div class="mt-2 space-y-1.5 text-slate-400 text-sm"><p>Kick-off & Anforderungen</p><p>Adaption des detaillierten Projektplans</p></div></div><div class="w-1/2 pl-8"><div class="h-16"></div><h4 class="font-semibold text-rose-400">${config.customerName}</h4><div class="mt-2 space-y-1.5 text-slate-400 text-sm"><p>Setup sicherstellen</p></div></div></div></div>
+                        <div class="relative"><div class="absolute top-4 left-1/2 -translate-x-1/2 z-10"><div class="flex items-center justify-center w-10 h-10 bg-sky-500 rounded-full ring-8 ring-slate-800 text-white font-bold text-lg">2</div></div><div class="flex justify-between items-start"><div class="w-1/2 pr-8 text-right"><h2 class="text-xl font-bold text-white pt-2">Phase 2: Installation</h2><p class="text-slate-400 mb-4 text-sm">(Woche 5-6)</p><h4 class="font-semibold text-sky-400">shyftplan</h4><div class="mt-2 space-y-1.5 text-slate-400 text-sm"><p>Aufsetzen der shyftplan-Umgebung</p><p>Einrichtung von Schnittstellen & Anbindungen</p></div></div><div class="w-1/2 pl-8"><div class="h-16"></div><h4 class="font-semibold text-rose-400">${config.customerName}</h4><div class="mt-2 space-y-1.5 text-slate-400 text-sm"><p>IT-Unterstützung</p></div></div></div></div>
+                        <div class="relative"><div class="absolute top-4 left-1/2 -translate-x-1/2 z-10"><div class="flex items-center justify-center w-10 h-10 bg-sky-500 rounded-full ring-8 ring-slate-800 text-white font-bold text-lg">3</div></div><div class="flex justify-between items-start"><div class="w-1/2 pr-8 text-right"><h2 class="text-xl font-bold text-white pt-2">Phase 3: Konfiguration</h2><p class="text-slate-400 mb-4 text-sm">(Woche 7-10)</p><h4 class="font-semibold text-sky-400">shyftplan</h4><div class="mt-2 space-y-1.5 text-slate-400 text-sm"><p>Grundkonfiguration</p><p>Einrichtung der Kernfunktionen</p><p>Anpassung des Konfigurations-Layers</p></div></div><div class="w-1/2 pl-8"><div class="h-16"></div><h4 class="font-semibold text-rose-400">${config.customerName}</h4><div class="mt-2 space-y-1.5 text-slate-400 text-sm"><p>Datenprüfung & Mapping</p></div></div></div></div>
+                        <div class="relative"><div class="absolute top-4 left-1/2 -translate-x-1/2 z-10"><div class="flex items-center justify-center w-10 h-10 bg-sky-500 rounded-full ring-8 ring-slate-800 text-white font-bold text-lg">4&5</div></div><div class="flex justify-between items-start"><div class="w-1/2 pr-8 text-right"><h2 class="text-xl font-bold text-white pt-2">Phase 4 & 5: Test & Go-Live</h2><p class="text-slate-400 mb-4 text-sm">(Woche 11-16)</p><h4 class="font-semibold text-sky-400">shyftplan</h4><div class="mt-2 space-y-1.5 text-slate-400 text-sm"><p>Key-User-Schulung & Testbegleitung</p><p>Finale Optimierungen & Go-Live</p><p>Hypercare</p></div></div><div class="w-1/2 pl-8"><div class="h-16"></div><h4 class="font-semibold text-rose-400">${config.customerName}</h4><div class="mt-2 space-y-1.5 text-slate-400 text-sm"><p>Tests & Finale Abnahme</p></div></div></div></div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        function getSlideHTML(step) {
+            if (!step) return '';
+            if (step.isIntegrationScope) return getIntegrationScopeHTML();
+            if (step.isEffortSummary) return getEffortSlideHTML();
+            if (step.isComponentsView) return getComponentsHTML(true);
+            if (step.isTestCatalog) return getTestCatalogHTML();
+
+            if (step.isSimpleSummary) {
+                return `<h2 class="font-bold text-2xl md:text-3xl text-center mb-6 text-white">Die Integrations-Reise im Überblick</h2><div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-4 text-center">${steps.filter(s => s.details).map(s => `<div class="bg-black/20 p-4 rounded-lg"><div class="w-12 h-12 text-[#aec7f8] mx-auto mb-3">${s.icon}</div><h3 class="font-bold text-sm md:text-base text-white">${s.title}</h3></div>`).join('')}</div>`;
+            }
+            if (step.isProjectPlan) {
+                return getProjectPlanHTML();
+            }
+            if (step.isDetailedSummary) {
+                return `<h2 class="font-bold text-2xl md:text-3xl text-center mb-4 text-white">Detaillierte Prozessübersicht</h2><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${steps.filter(s => s.details).map(s => `<div class="bg-black/20 p-3 rounded-lg"><div class="flex items-center gap-3 mb-2"><div class="w-8 h-8 text-[#aec7f8] flex-shrink-0">${s.icon}</div><h3 class="font-bold text-lg text-white">${s.title}</h3></div><div><h4 class="font-semibold text-[#77a0f6] text-xs">Wir stellen bereit:</h4><ul class="list-disc list-outside pl-5 text-xs space-y-px">${s.details.weProvide.map(d => `<li>${d}</li>`).join('')}</ul></div><div class="mt-2"><h4 class="font-semibold text-[#ff8eb7] text-xs">Sie übernehmen:</h4><ul class="list-disc list-outside pl-5 text-xs space-y-px">${s.details.youHandle.map(d => `<li>${d}</li>`).join('')}</ul></div></div>`).join('')}</div>`;
+            }
+            if (step.details) {
+                 const details = step.details;
+                 return `<div class="flex items-center gap-4 mb-4"><div class="w-10 h-10 text-[#aec7f8] flex-shrink-0">${step.icon}</div><h2 class="font-bold text-lg md:text-xl">${step.title}</h2></div><div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-left"><div><h4 class="font-bold text-[#77a0f6] mb-1 text-base">Wir stellen bereit:</h4><ul class="list-disc list-outside pl-5 text-sm space-y-1">${details.weProvide.map(d => `<li>${d}</li>`).join('')}</ul></div><div><h4 class="font-bold text-[#ff8eb7] mb-1 text-base">Sie übernehmen:</h4><ul class="list-disc list-outside pl-5 text-sm space-y-1">${details.youHandle.map(d => `<li>${d}</li>`).join('')}</ul></div><div class="md:col-span-2 mt-2"><h4 class="font-bold text-[#aec7f8] mb-1 text-base">Meetings:</h4><p class="text-sm">${details.meetings}</p></div></div>`;
+            }
+            return '';
+        }
+
+        function updateUIForStep(stepIdx) {
+            const step = steps[stepIdx];
+            if (!step.isIntro) introOverlay.classList.add('intro-hidden');
+            else introOverlay.classList.remove('intro-hidden');
+
+            stepDetailsContainer.classList.add('hidden');
+            summarySlideContainer.classList.add('hidden');
+            
+            const showContainer = (container, html) => {
+                const isScope = step.isIntegrationScope;
+                const isEffort = step.isEffortSummary;
+                const isComponents = step.isComponentsView;
+                const isTest = step.isTestCatalog;
+                let widthClass = 'max-w-5xl';
+                if (isScope) widthClass = 'max-w-7xl';
+                if (isEffort || isTest || isComponents) widthClass = 'max-w-6xl';
+
+                slideModalContentWrapper.className = `bg-slate-800 border border-slate-600 text-white rounded-2xl p-6 md:p-8 shadow-2xl w-full relative max-h-[90vh] overflow-y-auto ${widthClass} scroll-smooth`;
+                
+                container.innerHTML = html;
+                container.classList.remove('hidden');
+                container.style.opacity = 1;
+                (container === stepDetailsContainer ? summarySlideContainer : stepDetailsContainer).style.opacity = 0;
+                
+                if(isScope) initializeScopeViewer(container, step.scopeModuleIndex);
+                if(isEffort) initializeEffortViewer(container);
+                if(isComponents) initializeComponentsViewer(container);
+                if(isTest) initializeTestCatalogViewer(container);
+            };
+            
+            const slideHTML = getSlideHTML(step);
+            if(slideHTML && (step.isSimpleSummary || step.isProjectPlan || step.isTestCatalog || step.isDetailedSummary || step.isIntegrationScope || step.isEffortSummary || step.isComponentsView)) {
+                showContainer(summarySlideContainer, slideHTML);
+            } else if (slideHTML && step.details) {
+                showContainer(stepDetailsContainer, slideHTML);
+            }
+            else {
+                 stepDetailsContainer.style.opacity = 0;
+                 summarySlideContainer.style.opacity = 0;
+            }
+
+            prevButton.disabled = stepIdx === 0;
+            nextButton.disabled = false;
+        }
+
+        function goToStep(stepIdx, playFromStart = true) {
+            if (stepIdx < 0 || stepIdx >= steps.length) return;
+            currentStepIndex = stepIdx;
+            currentNarrativeIndex = playFromStart ? 0 : steps[stepIdx].narrative.length - 1;
+            updateUIForStep(stepIdx);
+            playNarrativeLine(stepIdx, currentNarrativeIndex);
+        }
+
+        function updateProgressBar() {
+            let completedDuration = 0;
+            const totalDurationMs = steps.flatMap(s => s.narrative).reduce((acc, n) => acc + n.duration, 0);
+            for (let i = 0; i < currentStepIndex; i++) {
+                completedDuration += steps[i].narrative.reduce((acc, n) => acc + n.duration, 0);
+            }
+            for (let i = 0; i < currentNarrativeIndex; i++) {
+                completedDuration += steps[currentStepIndex].narrative[i].duration;
+            }
+            progressBarInner.style.width = `${(completedDuration / totalDurationMs) * 100}%`;
+        }
+        
+        function showScreen(screenId) {
+            screens.forEach(screen => {
+                if (screen && !screen.id.includes('modal') && !screen.id.includes('panel')) {
+                    screen.classList.add('hidden');
+                }
+            });
+            const activeScreen = document.getElementById(screenId);
+            if (activeScreen) activeScreen.classList.remove('hidden');
+
+            document.body.style.backgroundColor = '#f1f5f9';
+        }
+
+        function startTour(startStepIndex = 0) {
+            isAutoPlaying = true;
+            showScreen('tour-wrapper');
+            // The video elements don't have a shared 'video' variable.
+            // startVideoLoop will handle playing the first video.
+            startVideoLoop();
+            goToStep(startStepIndex);
+        }
+
+        function startVideoLoop() {
+            Promise.all(Array.from(videos).map(v => {
+                if (v.readyState < 4) { // HAVE_ENOUGH_DATA, for smoother playback
+                    v.load();
+                    return new Promise(resolve => v.oncanplaythrough = resolve);
+                }
+                return Promise.resolve();
+            })).then(() => {
+                const firstVideo = videos[0];
+                firstVideo.play().catch(error => console.error("Fehler beim Abspielen des Videos:", error));
+                addVideoEndListener(firstVideo);
+            }).catch(err => console.error("Fehler beim Vorladen der Videos:", err));
+        }
+
+        function stopVideoLoop() {
+            videos.forEach((video) => {
+                video.pause();
+                if (video.classList.contains('active')) {
+                    video.classList.remove('active');
+                }
+                // Remove any existing listener
+                const handler = videoTimeUpdateHandlers.get(video);
+                if (handler) {
+                    video.removeEventListener('timeupdate', handler);
+                    videoTimeUpdateHandlers.delete(video);
+                }
+            });
+            videos[0].classList.add('active');
+            currentVideoIndex = 0;
+        }
+
+        function addVideoEndListener(video) {
+            const handler = () => {
+                if (video.duration && (video.duration - video.currentTime <= FADE_DURATION_SECONDS)) {
+                    video.removeEventListener('timeupdate', handler);
+                    videoTimeUpdateHandlers.delete(video);
+                    transitionToNextVideo();
+                }
+            };
+            video.addEventListener('timeupdate', handler);
+            videoTimeUpdateHandlers.set(video, handler);
+        }
+
+        function transitionToNextVideo() {
+            const oldVideo = videos[currentVideoIndex];
+            let nextVideoIndex = (currentVideoIndex === 0) ? 1 : (currentVideoIndex + 1);
+            if (nextVideoIndex >= videos.length) nextVideoIndex = 1;
+
+            const newVideo = videos[nextVideoIndex];
+            currentVideoIndex = nextVideoIndex;
+
+            newVideo.currentTime = 0;
+            newVideo.play().catch(error => console.error(`Fehler beim Abspielen von Video ${nextVideoIndex}:`, error));
+            newVideo.classList.add('active');
+            oldVideo.classList.remove('active');
+
+            setTimeout(() => oldVideo.pause(), FADE_DURATION_SECONDS * 1000);
+            addVideoEndListener(newVideo);
+        }
+
+        function showStartScreen() {
+            isAutoPlaying = false;
+            clearTimeout(narrativeTimeout);
+            stopVideoLoop();
+            showScreen('start-screen');
+            narratorImage.classList.add('opacity-0', 'scale-90');
+            progressBarInner.style.width = '0%';
+        }
+
+        function showEndScreen() {
+            isAutoPlaying = false;
+            clearTimeout(narrativeTimeout);
+            stopVideoLoop();
+            showScreen('end-screen');
+            narratorImage.classList.add('opacity-0', 'scale-90');
+        }
+
+        function handleManualNavigation(direction) {
+            isAutoPlaying = false;
+            clearTimeout(narrativeTimeout);
+            introOverlay.classList.add('intro-hidden'); 
+            
+            if (direction > 0 && currentStepIndex === steps.length - 1) {
+                showEndScreen();
+                return;
+            }
+
+            const newStepIndex = currentStepIndex + direction;
+            if (newStepIndex >= 0 && newStepIndex < steps.length) {
+                goToStep(newStepIndex);
+            }
+        }
+        
+        function showSlideInModal(stepIndex) {
+            const step = steps[stepIndex];
+            const isScope = step.isIntegrationScope;
+            const isComponents = step.isComponentsView;
+            const isEffort = step.isEffortSummary;
+            const isTest = step.isTestCatalog;
+
+            let widthClass = 'max-w-5xl';
+            if (isScope) widthClass = 'max-w-7xl';
+            if (isEffort || isTest || isComponents) widthClass = 'max-w-6xl';
+
+            slideModalContentWrapper.className = `bg-slate-800 border border-slate-600 text-white rounded-2xl p-6 md:p-8 shadow-2xl w-full relative max-h-[90vh] overflow-y-auto ${widthClass}`;
+
+            const html = getSlideHTML(step);
+            if(html) {
+                modalContent.innerHTML = html;
+                slideModal.classList.remove('hidden');
+                if(isScope) initializeScopeViewer(modalContent);
+                if(isComponents) initializeComponentsViewer(modalContent);
+                if(isEffort) initializeEffortViewer(modalContent);
+                if(isTest) initializeTestCatalogViewer(modalContent);
+            }
+        }
+        
+        function initializeScopeViewer(containerElement, moduleIndexToShow = -1) {
+            const modules = [
+                { id: 1, title: 'Grundlagen-Sync', subtitle: 'Modul 1: Stammdaten', color: '#9865f6', items: [ { title: 'Standorte & Arbeitsbereiche', text: 'Standorte und Dummy-Arbeitsbereiche werden aus SAP-Objekten (z.B. Org.-Einheiten) erstellt.', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>` }, { title: 'Abwesenheitstypen', text: 'Abwesenheitstypen inkl. Zeitkonten werden aus SAP gemappt und erstellt.', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>` }, { title: 'Tags', text: 'Tags zur Nutzung für Payroll-relevante Reporte aus shyftplan werden festgelegt und übertragen.', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 18H4V6h16v12zM6 8v2h2V8H6zm4 0v2h2V8h-2zm4 0v2h2V8h-2zM6 12v2h2v-2H6zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2z"/></svg>` }, { title: 'Schichtvorlagen', text: 'Tagesprogramme und Periodenarbeitszeitpläne aus SAP werden als Schichtvorlagen und Rotationen abgebildet.', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>` } ] },
+                { id: 2, title: 'Mitarbeiterdaten-Sync', subtitle: 'Modul 2: Personal', color: '#9865f6', items: [ { title: 'Mitarbeiterdetails', text: 'Stammdaten der Mitarbeiter, inklusive Rotationsgruppe, werden übertragen.', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>` }, { title: 'Ansprüche & Salden', text: 'Aktuelle Urlaubsansprüche und Zeitkontostände werden übermittelt.', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>` } ] },
+                { id: 3, title: 'HCM Schichtdaten-Sync', subtitle: 'Modul 3: Schichtdaten', color: '#60a5fa', items: [ { title: 'Vertretungen & Überstunden', text: 'Vertretungen und genehmigte Überstunden werden an SAP gemeldet.', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>` }, { title: 'Live Status', text: 'Stempelzeiten werden aus HCM in Echtzeit an shyftplan für digitale Anwesenheitskontrolle übertragen.', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>` }, { title: 'Korrekturen & Ausleihen', text: 'Korrigierte Stempelzeiten und interne Ausleihen werden synchronisiert.', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>` } ] },
+                { id: 4, title: 'Abwesenheiten-Sync', subtitle: 'Modul 4: Abwesenheiten', color: '#ff8eb7', items: [ { title: 'Abwesenheiten (nach Typ)', text: 'Abwesenheiten werden je nach führendem System bidirektional synchronisiert.', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>` } ] }
+            ];
+            
+            const mainContainer = containerElement.querySelector('#scope-main-container');
+            if (!mainContainer) return;
+            
+            const moduleHTML = modules.map(module => `
+                <div class="scope-card w-[90vw] max-w-lg md:w-96 flex-shrink-0 bg-slate-700/50 p-6 rounded-3xl shadow-2xl border border-slate-400/20">
+                    <div class="flex items-center mb-4"><div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-inner" style="background-color:${module.color};">${module.id}</div><div class="ml-4"><h3 class="text-xl font-bold">${module.title}</h3><p class="text-sm font-semibold" style="color:${module.color};">${module.subtitle}</p></div></div>
+                    <div class="space-y-2 text-slate-200">${module.items.map(item => `<details><summary class="flex justify-between items-center cursor-pointer p-3 rounded-xl hover:bg-slate-600/50 transition-colors"><div class="flex items-center"><div class="w-6 h-6" style="color:${module.color};">${item.icon}</div><span class="ml-3 pr-2">${item.title}</span></div><div class="plus-minus-icon text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div></summary><div class="details-content mt-2 px-4 pb-2 text-sm text-slate-300 border-l-2 ml-5" style="border-color:${module.color}50;"><p>${item.text}</p></div></details>`).join('')}</div>
+                </div>
+            `).join('');
+
+            mainContainer.innerHTML = `<div class="w-2 sm:w-16 h-full flex-shrink-0"></div> ${moduleHTML} <div class="w-2 sm:w-16 h-full flex-shrink-0"></div>`;
+            
+            const scrollLeftBtn = containerElement.querySelector('#scope-scroll-left-btn');
+            const scrollRightBtn = containerElement.querySelector('#scope-scroll-right-btn');
+            const cards = mainContainer.querySelectorAll('.scope-card');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    entry.target.classList.toggle('is-visible', entry.isIntersecting);
+                });
+            }, { root: mainContainer, threshold: 0.6 });
+            cards.forEach(card => observer.observe(card));
+
+            const updateNavigation = () => {
+                if (!mainContainer) return;
+                const scrollLeft = mainContainer.scrollLeft;
+                const scrollWidth = mainContainer.scrollWidth - mainContainer.clientWidth;
+                if(scrollLeftBtn) scrollLeftBtn.disabled = scrollLeft < 1;
+                if(scrollRightBtn) scrollRightBtn.disabled = scrollLeft > scrollWidth - 1;
+            };
+
+            mainContainer.addEventListener('scroll', updateNavigation);
+            
+            if(scrollLeftBtn) scrollLeftBtn.addEventListener('click', () => {
+                const scrollAmount = mainContainer.querySelector('.scope-card').offsetWidth + 32;
+                mainContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            });
+            if(scrollRightBtn) scrollRightBtn.addEventListener('click', () => {
+                const scrollAmount = mainContainer.querySelector('.scope-card').offsetWidth + 32;
+                mainContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            });
+            
+            updateNavigation();
+
+            if (moduleIndexToShow >= 0 && cards[moduleIndexToShow]) {
+                setTimeout(() => {
+                    cards[moduleIndexToShow].scrollIntoView({ behavior: 'smooth', inline: 'center' });
+                }, 200);
+            }
+        }
+
+        function initializeEffortViewer(containerElement) {
+            const toggleButtons = containerElement.querySelectorAll('.toggle-detail-button');
+            const closeButtons = containerElement.querySelectorAll('.close-detail-button');
+            const detailCards = containerElement.querySelectorAll('.phase-detail-card');
+
+            const hideAllDetails = () => {
+                detailCards.forEach(card => card.classList.remove('is-active'));
+            };
+
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const phaseId = button.dataset.phaseId;
+                    const targetDetailCard = containerElement.querySelector(`#detail-${phaseId}`);
+                    if (!targetDetailCard) return;
+                    const isActive = targetDetailCard.classList.contains('is-active');
+                    hideAllDetails();
+                    if (!isActive) {
+                        targetDetailCard.classList.add('is-active');
+                    }
+                });
+            });
+
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    button.closest('.phase-detail-card').classList.remove('is-active');
+                });
+            });
+        }
+
+        function initializeTestCatalogViewer(containerElement) {
+            const testCases = [
+                { id: 1, milestone: 'M1: Synchronisation der Unternehmens-Stammdaten', component: 'Standorte', leadingSystem: 'SAP', testScenario: 'Standort anlegen', expectedResultType: 'Erfolg', expectedResultDetail: 'Ein neuer Standort wird in shyftplan angelegt.', status: 'success' },
+                { id: 2, milestone: 'M1: Synchronisation der Unternehmens-Stammdaten', component: 'Standorte', leadingSystem: 'SAP', testScenario: 'Standort aktualisieren - Name ändern', expectedResultType: 'Erfolg', expectedResultDetail: 'Der Standort (Name) wird in shyftplan aktualisiert.', status: 'success' },
+                { id: 3, milestone: 'M1: Synchronisation der Unternehmens-Stammdaten', component: 'Standorte', leadingSystem: 'SAP', testScenario: 'Standort aktualisieren - Archivieren', expectedResultType: 'Erfolg', expectedResultDetail: 'Der Standort wird archiviert und ist nicht mehr sichtbar oder nutzbar.', status: 'failed' },
+                { id: 4, milestone: 'M1: Synchronisation der Unternehmens-Stammdaten', component: 'Standorte', leadingSystem: 'SAP', testScenario: 'Standort aktualisieren - Löschen', expectedResultType: 'Erfolg', expectedResultDetail: 'Der Standort und das Mapping werden in shyftplan gelöscht.', status: 'success' },
+                { id: 5, milestone: 'M1: Synchronisation der Unternehmens-Stammdaten', component: 'Standorte', leadingSystem: 'SAP', testScenario: 'Standort aktualisieren - Wiederherstellen', expectedResultType: 'Erfolg', expectedResultDetail: 'Der Standort wird in shyftplan wiederhergestellt.', status: 'pending' },
+                { id: 6, milestone: 'M1: Synchronisation der Unternehmens-Stammdaten', component: 'Standorte', leadingSystem: 'SAP', testScenario: 'Alle shyftplan-relevanten Standorte synchronisieren', expectedResultType: 'Erfolg', expectedResultDetail: 'Alle für shyftplan relevanten Standorte werden (nach Kundenabsprache) angelegt.', status: 'success' },
+                { id: 7, milestone: 'M1: Synchronisation der Unternehmens-Stammdaten', component: 'Arbeitsbereiche', leadingSystem: 'SAP', testScenario: 'Arbeitsbereich anlegen', expectedResultType: 'Erfolg', expectedResultDetail: 'Ein neuer Arbeitsbereich wird in shyftplan angelegt.', status: 'success' },
+                { id: 8, milestone: 'M1: Synchronisation der Unternehmens-Stammdaten', component: 'Arbeitsbereiche', leadingSystem: 'SAP', testScenario: 'Arbeitsbereich aktualisieren - Name ändern', expectedResultType: 'Erfolg', expectedResultDetail: 'Der Arbeitsbereich (Name) wird in shyftplan aktualisiert.', status: 'success' },
+                { id: 9, milestone: 'M1: Synchronisation der Unternehmens-Stammdaten', component: 'Arbeitsbereiche', leadingSystem: 'SAP', testScenario: 'Arbeitsbereich aktualisieren - Archivieren', expectedResultType: 'Erfolg', expectedResultDetail: 'Der Arbeitsbereich wird archiviert und ist nicht mehr sichtbar oder nutzbar.', status: 'pending' },
+                { id: 10, milestone: 'M2: Synchronisation der Mitarbeiter-Stammdaten', component: 'Mitarbeiter', leadingSystem: 'SAP', testScenario: 'Neuen Mitarbeiter anlegen', expectedResultType: 'Erfolg', expectedResultDetail: 'Ein neuer Mitarbeiter wird mit allen Stammdaten in shyftplan angelegt.', status: 'success' },
+                { id: 11, milestone: 'M2: Synchronisation der Mitarbeiter-Stammdaten', component: 'Mitarbeiter', leadingSystem: 'SAP', testScenario: 'Vertragsdaten des Mitarbeiters aktualisieren', expectedResultType: 'Erfolg', expectedResultDetail: 'Änderungen der Vertragsdaten werden in shyftplan übernommen.', status: 'failed' },
+                { id: 12, milestone: 'M2: Synchronisation der Mitarbeiter-Stammdaten', component: 'Zeitkonten', leadingSystem: 'SAP', testScenario: 'Urlaubsanspruch synchronisieren', expectedResultType: 'Erfolg', expectedResultDetail: 'Der Urlaubssaldo wird in shyftplan korrekt aktualisiert.', status: 'pending' },
+            ];
+            const listContainer = containerElement.querySelector('#test-case-list');
+            const searchInput = containerElement.querySelector('#search-input');
+            const statusFilters = containerElement.querySelector('#status-filters');
+            const noResults = containerElement.querySelector('#no-results');
+            const statusConfig = { success: { text: 'Bestanden', color: 'green' }, failed: { text: 'Fehlgeschlagen', color: 'red' }, pending: { text: 'Ausstehend', color: 'slate' } };
+
+            const renderTestCases = (cases) => {
+                listContainer.innerHTML = '';
+                if (cases.length === 0) { noResults.classList.remove('hidden'); return; }
+                noResults.classList.add('hidden');
+                cases.forEach(tc => {
+                    const config = statusConfig[tc.status];
+                    const card = `<div class="test-case-card bg-slate-700/50 rounded-lg hover:bg-slate-600/50 transition duration-300" data-id="${tc.id}"><div class="summary-view p-4 cursor-pointer flex justify-between items-center"><div class="flex-grow pr-4"><div class="flex items-center mb-2 md:mb-0"><span class="text-slate-400 font-semibold text-sm mr-2">#${tc.id}</span><p class="font-semibold text-sm md:text-base">${tc.testScenario}</p></div><div class="md:hidden mt-2 flex justify-between items-center"><span class="text-xs text-slate-300">${tc.component}</span><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${config.color}-500/20 text-${config.color}-300"><svg class="w-2 h-2 mr-1.5 fill-current" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4"/></svg>${config.text}</span></div></div><div class="hidden md:flex items-center gap-4 flex-shrink-0"><span class="w-24 text-sm text-slate-300">${tc.component}</span><span class="w-32 text-center"><span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-${config.color}-500/20 text-${config.color}-300"><svg class="w-2 h-2 mr-2 fill-current" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4"/></svg>${config.text}</span></span></div><div class="flex-shrink-0"><svg class="chevron-icon w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div></div><div class="details-content border-t border-slate-600"><div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm"><div><p class="font-semibold text-slate-400 mb-1">Modul</p><p>${tc.milestone}</p></div><div><p class="font-semibold text-slate-400 mb-1">Führendes System</p><p>${tc.leadingSystem}</p></div><div class="md:col-span-2"><p class="font-semibold text-slate-400 mb-1">Erwartetes Ergebnis</p><p class="text-slate-300">${tc.expectedResultDetail}</p></div></div></div></div>`;
+                    listContainer.insertAdjacentHTML('beforeend', card);
+                });
+            };
+            const updateDashboard = (cases) => {
+                const total = cases.length;
+                const passed = cases.filter(c => c.status === 'success').length;
+                const failed = cases.filter(c => c.status === 'failed').length;
+                const completed = passed + failed;
+                const progress = total > 0 ? (completed / total) * 100 : 0;
+                containerElement.querySelector('#total-tests').textContent = total;
+                containerElement.querySelector('#passed-tests').textContent = passed;
+                containerElement.querySelector('#failed-tests').textContent = failed;
+                const progressBar = containerElement.querySelector('#progress-bar-inner-test');
+                const progressText = containerElement.querySelector('#progress-text-test');
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${Math.round(progress)}% abgeschlossen`;
+                progressBar.classList.toggle('bg-red-500', failed > 0);
+                progressBar.classList.toggle('bg-green-500', failed === 0);
+            };
+            const filterAndRender = () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const activeStatus = statusFilters.querySelector('.active').dataset.status;
+                const filteredCases = testCases.filter(tc => {
+                    const matchesSearch = searchTerm === '' || tc.id.toString().includes(searchTerm) || tc.component.toLowerCase().includes(searchTerm) || tc.testScenario.toLowerCase().includes(searchTerm);
+                    const matchesStatus = activeStatus === 'all' || tc.status === activeStatus;
+                    return matchesSearch && matchesStatus;
+                });
+                renderTestCases(filteredCases);
+            };
+            listContainer.addEventListener('click', e => {
+                const summary = e.target.closest('.summary-view');
+                if (summary) { summary.parentElement.classList.toggle('is-expanded'); }
+            });
+            searchInput.addEventListener('input', filterAndRender);
+            statusFilters.addEventListener('click', e => {
+                if (e.target.tagName === 'BUTTON') {
+                    statusFilters.querySelector('.active').classList.remove('active');
+                    e.target.classList.add('active');
+                    filterAndRender();
+                }
+            });
+            renderTestCases(testCases);
+            updateDashboard(testCases);
+        }
+
+        function getComponentsHTML(isSlideView = false) {
+            const headerClass = isSlideView ? 'text-left' : 'text-center mb-8';
+            return `
+            <style>
+                .components-container .feature-list li { position: relative; padding-left: 1.75rem; margin-bottom: 0.75rem; }
+                .components-container .feature-list li::before { content: '✓'; position: absolute; left: 0; top: 1px; color: #9865f6; font-weight: 700; }
+                .components-container .carousel-image { position: absolute; top: 0; left: 0; opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out; object-fit: contain; background-color: #1f2937; cursor: zoom-in; }
+                .components-container .carousel-image.active { opacity: 1; visibility: visible; }
+                .components-container .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; }
+                .components-container .collapsible-content.open { max-height: 2000px; }
+                .components-container .toggle-icon { transition: transform 0.3s ease-in-out; }
+                .components-container .toggle-icon.rotated { transform: rotate(180deg); }
+            </style>
+            <div class="components-container scroll-smooth">
+                <header class="${headerClass}">
+                    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Technische Komponenten</h1>
+                    <p class="mt-2 text-base text-slate-300">Zwei leistungsstarke Pakete zur nahtlosen Verbindung Ihrer SAP-Systeme.</p>
+                </header>
+                <div class="grid grid-cols-1 gap-8 mt-8">
+                    <div class="bg-black/20 rounded-2xl shadow-lg overflow-hidden flex flex-col p-6 md:p-8">
+                        <div class="collapsible-trigger cursor-pointer flex justify-between items-center">
+                            <h2 class="text-xl font-bold text-white">Interface-Programm für HCM Backend</h2>
+                            <svg class="toggle-icon h-6 w-6 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="pt-6">
+                                <div class="carousel-container relative h-56 md:h-64 w-full mb-6 rounded-lg overflow-hidden border border-slate-600">
+                                    <img src="assets/images/sap-overview.png" alt="SAP Overview" class="carousel-image active w-full h-full zoomable">
+                                    <img src="assets/images/sap-detail.png" alt="SAP Detail" class="carousel-image w-full h-full zoomable">
+                                    <button class="prev-btn absolute top-1/2 left-2 -translate-y-1/2 bg-black bg-opacity-30 text-white rounded-full p-2 hover:bg-opacity-50 transition-opacity focus:outline-none z-10"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
+                                    <button class="next-btn absolute top-1/2 right-2 -translate-y-1/2 bg-black bg-opacity-30 text-white rounded-full p-2 hover:bg-opacity-50 transition-opacity focus:outline-none z-10"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg></button>
+                                </div>
+                                <h3 class="text-base font-semibold text-slate-100 mb-3">Enthaltene Funktionalitäten:</h3>
+                                <ul class="feature-list text-slate-300 mb-6">
+                                    <li>Konfiguration inklusive Mapping-Tabellen</li><li>Integriertes Job-Scheduling</li><li>Umfassendes Monitoring</li><li>Manuelle Sync/Report-Möglichkeiten</li><li>Einfache Einstellung via SAP Standardtransporte</li><li>Keine Entwicklung auf Ihrem Produktivsystem notwendig</li><li>Nutzung von SAP Standardfunktionalitäten & HTTPS Calls</li>
+                                </ul>
+                                <h3 class="text-base font-semibold text-slate-100 mb-3 mt-8">Was kommt mit dem Transport?</h3>
+                                <p class="text-slate-300 mb-4">Das initiale Auslieferungspaket enthält die folgenden, klar strukturierten Transportaufträge:</p>
+                                <div class="space-y-4">
+                                     <div class="bg-slate-800 p-4 rounded-lg"><p class="font-semibold text-slate-200">Workbench-Transport</p><p class="text-sm text-slate-400">Enthält alle erforderlichen Programme und Schnittstellenobjekte. (Muss zuerst importiert werden)</p></div>
+                                     <div class="bg-slate-800 p-4 rounded-lg"><p class="font-semibold text-slate-200">Customizing- & Rollen-Transport</p><p class="text-sm text-slate-400">Beinhaltet Berechtigungsrollen und Konfigurationseinstellungen zur Verwaltung.</p></div>
+                                     <div class="bg-slate-800 p-4 rounded-lg"><p class="font-semibold text-slate-200">Readme-Dokumentation</p><p class="text-sm text-slate-400">Vollständige Liste aller Objekte und eine Anleitung für die korrekte Importreihenfolge.</p></div>
+                                </div>
+                                <div class="mt-8 bg-sky-900/50 border-l-4 border-sky-500 text-sky-200 p-4 rounded-r-lg"><p class="font-bold">Hinweis für sichere Umgebungen</p><p class="mt-2 text-sm">Falls Ihre Richtlinien den Import von Rollen-Transporten untersagen, nutzen Sie die Dokumentation. Sie listet alle Berechtigungsobjekte auf, damit Ihr Team die Rollen manuell anlegen kann.</p></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-black/20 rounded-2xl shadow-lg overflow-hidden flex flex-col p-6 md:p-8">
+                         <div class="collapsible-trigger cursor-pointer flex justify-between items-center">
+                            <h2 class="text-xl font-bold text-white">iFlows für die BTP CPI</h2>
+                             <svg class="toggle-icon h-6 w-6 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        </div>
+                        <div class="collapsible-content">
+                             <div class="pt-6">
+                                <div class="carousel-container relative h-56 md:h-64 w-full mb-6 rounded-lg overflow-hidden border border-slate-600">
+                                    <img src="assets/images/cpi-overview.png" alt="CPI Overview" class="carousel-image active w-full h-full zoomable">
+                                    <img src="assets/images/cpi-detail.png" alt="CPI Detail" class="carousel-image w-full h-full zoomable">
+                                    <button class="prev-btn absolute top-1/2 left-2 -translate-y-1/2 bg-black bg-opacity-30 text-white rounded-full p-2 hover:bg-opacity-50 transition-opacity focus:outline-none z-10"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
+                                    <button class="next-btn absolute top-1/2 right-2 -translate-y-1/2 bg-black bg-opacity-30 text-white rounded-full p-2 hover:bg-opacity-50 transition-opacity focus:outline-none z-10"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg></button>
+                                </div>
+                                <h3 class="text-base font-semibold text-slate-100 mb-3">Voraussetzungen & Deployment:</h3>
+                                 <ul class="feature-list text-slate-300">
+                                    <li>"Basic Package" auf der CPI erforderlich</li><li>iFlows werden direkt auf Ihrer Instanz deployed</li><li>Schnelle und standardisierte Inbetriebnahme</li><li>Skalierbare Cloud-Integration</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-80 hidden items-center justify-center p-4 z-[60] transition-opacity duration-300">
+                    <span id="modal-close" class="absolute top-4 right-6 text-white text-5xl font-bold cursor-pointer hover:text-gray-300">&times;</span>
+                    <img id="modal-image" src="" alt="Vergrößerte Ansicht" class="max-w-[95vw] max-h-[95vh] rounded-lg">
+                </div>
+            </div>`;
+        }
+
+        function initializeComponentsViewer(container) {
+            const carousels = container.querySelectorAll('.carousel-container');
+            carousels.forEach(carousel => {
+                const images = carousel.querySelectorAll('.carousel-image');
+                const prevBtn = carousel.querySelector('.prev-btn');
+                const nextBtn = carousel.querySelector('.next-btn');
+                if (!images.length || !prevBtn || !nextBtn) return;
+                let currentIndex = 0;
+                function showImage(index) { images.forEach((img, i) => img.classList.toggle('active', i === index)); }
+                prevBtn.addEventListener('click', (e) => { e.stopPropagation(); currentIndex = (currentIndex - 1 + images.length) % images.length; showImage(currentIndex); });
+                nextBtn.addEventListener('click', (e) => { e.stopPropagation(); currentIndex = (currentIndex + 1) % images.length; showImage(currentIndex); });
+                showImage(currentIndex);
+            });
+            const triggers = container.querySelectorAll('.collapsible-trigger');
+            triggers.forEach(trigger => {
+                const content = trigger.nextElementSibling;
+                const icon = trigger.querySelector('.toggle-icon');
+                if (content && icon) {
+                    if(content.classList.contains('open')) { icon.classList.add('rotated'); }
+                    trigger.addEventListener('click', () => { content.classList.toggle('open'); icon.classList.toggle('rotated'); });
+                }
+            });
+            const modal = container.querySelector('#image-modal'), modalImg = container.querySelector('#modal-image'), closeModal = container.querySelector('#modal-close'), zoomableImages = container.querySelectorAll('.zoomable');
+            if (modal && modalImg && closeModal) {
+                const hideModal = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); modalImg.src = ""; }
+                zoomableImages.forEach(img => { img.addEventListener('click', () => { modal.classList.remove('hidden'); modal.classList.add('flex'); modalImg.src = img.src; }); });
+                closeModal.addEventListener('click', hideModal);
+                modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
+            }
+        }
+
+        function showComponentsModal() {
+            const content = getComponentsHTML(false);
+            modalContent.innerHTML = content;
+            initializeComponentsViewer(modalContent);
+            slideModalContentWrapper.className = `bg-slate-800 border border-slate-600 text-white rounded-2xl p-6 md:p-8 shadow-2xl w-full relative max-h-[90vh] overflow-y-auto max-w-6xl`;
+            slideModal.classList.remove('hidden');
+        }
+
+        function getPrerequisitesHTML() {
+            return `
+            <style>
+                .prerequisites-container .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0, 1, 0, 1); }
+                .prerequisites-container .accordion-item.open .accordion-content { max-height: 1000px; transition: max-height 1s ease-in-out; }
+                .prerequisites-container .accordion-item.open .chevron { transform: rotate(180deg); }
+                .prerequisites-container .chevron { transition: transform 0.3s ease; }
+                .prerequisites-container .gradient-text { background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+            </style>
+            <div class="prerequisites-container">
+                <header class="text-center mb-8">
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Technische Voraussetzungen</h2>
+                    <p class="text-base gradient-text font-semibold">für die SAP HCM & shyftplan Integration</p>
+                </header>
+                <div class="space-y-4">
+                    <div class="accordion-item bg-black/20 rounded-lg border border-slate-700">
+                        <button class="accordion-toggle flex justify-between items-center w-full p-4 text-left"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg><span class="font-semibold text-lg text-white">SAP HCM On-Premise</span></div><svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></button>
+                        <div class="accordion-content"><div class="p-4 border-t border-slate-700 space-y-4 text-sm"><div><h4 class="font-bold text-white mb-1">Change Monitoring (Infotypes)</h4><p class="text-slate-300">Data Logging muss aktiviert sein für: IT0000, IT0001, IT0002, IT0007, IT0105, IT2001, IT2002, IT2006, IT2007.</p></div><div><h4 class="font-bold text-white mb-1">Technische User</h4><p class="text-slate-300">1. <strong class="text-slate-200">Typ B (System):</strong> Für Jobs, SAP_ALL, kein Dialog-Login.<br>2. <strong class="text-slate-200">Typ C (Kommunikation):</strong> Für externe Kommunikation, SAP_ALL, kein Dialog-Login.</p></div><div><h4 class="font-bold text-white mb-1">Kryptografie & TLS</h4><p class="text-slate-300">Kommunikation via <strong class="text-slate-200">TLS 1.2</strong>. SAPCRYPTOLIB ≥ 8.5.4 (Note 510007) erforderlich. Ggf. Kernel-Update & Parameter-Anpassung (RZ10/RZ11).</p></div><div><h4 class="font-bold text-white mb-1">Zertifikate</h4><p class="text-slate-300">HTTPS-Zertifikat für <strong class="text-slate-200">shyftplan.com</strong> via Transaktion <strong class="text-slate-200">STRUST</strong> importieren.</p></div></div></div>
+                    </div>
+                    <div class="accordion-item bg-black/20 rounded-lg border border-slate-700">
+                        <button class="accordion-toggle flex justify-between items-center w-full p-4 text-left"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7.C14 5 16.09 5.777 17.657 7.343A8 8 0 0117.657 18.657z" /><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 16.121A3 3 0 1014.12 11.879A3 3 0 009.879 16.121z" /></svg><span class="font-semibold text-lg text-white">SAP BTP</span></div><svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></button>
+                        <div class="accordion-content"><div class="p-4 border-t border-slate-700 space-y-4 text-sm"><div><h4 class="font-bold text-white mb-1">Basics</h4><p class="text-slate-300"><strong class="text-slate-200">Integration Suite (CPI)</strong> wird zur Erstellung der iFlows genutzt.</p></div><div><h4 class="font-bold text-white mb-1">Cloud Connector (CC)</h4><p class="text-slate-300">Muss installiert & mit SAP HCM Backend verbunden sein. <strong class="text-slate-200">"Location ID"</strong> muss bekannt sein.</p></div><div><h4 class="font-bold text-white mb-1">Konnektivitätstest</h4><p class="text-slate-300">Muss in BTP Integration Suite für die "Location ID" <strong class="text-slate-200">erfolgreich</strong> sein.</p></div><div><h4 class="font-bold text-white mb-1">Integration Packages</h4><p class="text-slate-300">Separate Packages in CPI für <strong class="text-slate-200">DEV, TST, PRD</strong> anlegen.</p></div><div><h4 class="font-bold text-white mb-1">Autorisierungen</h4><p class="text-slate-300">Rolle zum Senden von Nachrichten prüfen (Standard: <strong class="text-slate-200">ESBMessaging.send</strong> oder custom Rolle).</p></div></div></div>
+                    </div>
+                    <div class="accordion-item bg-black/20 rounded-lg border border-slate-700">
+                        <button class="accordion-toggle flex justify-between items-center w-full p-4 text-left"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg><span class="font-semibold text-lg text-white">Integration (shyftplan)</span></div><svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></button>
+                        <div class="accordion-content"><div class="p-4 border-t border-slate-700 space-y-4 text-sm"><div><h4 class="font-bold text-white mb-1">Webhooks</h4><p class="text-slate-300">Kunde muss spezifische <strong class="text-slate-200">Webhook-URLs</strong> für Schnittstellen (z.B. Abwesenheiten) bereitstellen.</p></div><div><h4 class="font-bold text-white mb-1">Authentifizierung (shyftplan -> BTP)</h4><p class="text-slate-300"><strong class="text-slate-200">Basic Auth / OAuth 2.0</strong> sicherstellen. Optional: IP-Pinning-Bedarf klären.</p></div></div></div>
+                    </div>
+                    <div class="accordion-item bg-black/20 rounded-lg border border-slate-700">
+                        <button class="accordion-toggle flex justify-between items-center w-full p-4 text-left"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg><span class="font-semibold text-lg text-white">Netzwerk & Firewall</span></div><svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></button>
+                        <div class="accordion-content"><div class="p-4 border-t border-slate-700 space-y-4 text-sm"><div><h4 class="font-bold text-white mb-1">Firewall-Regeln</h4><p class="text-slate-300"><strong class="text-slate-200">Ausgehender TCP/HTTPS-Traffic</strong> von BTP CPI zu shyftplan Cloud IPs/Ports muss erlaubt sein.</p></div></div></div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function initializePrerequisitesViewer(container) {
+            const accordionToggles = container.querySelectorAll('.accordion-toggle');
+            accordionToggles.forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    const item = toggle.parentElement;
+                    item.classList.toggle('open');
+                });
+            });
+        }
+
+        function showPrerequisitesModal() {
+            const content = getPrerequisitesHTML();
+            modalContent.innerHTML = content;
+            initializePrerequisitesViewer(modalContent);
+            slideModalContentWrapper.className = `bg-slate-800 border border-slate-600 text-white rounded-2xl p-6 md:p-8 shadow-2xl w-full relative max-h-[90vh] overflow-y-auto max-w-2xl`;
+            slideModal.classList.remove('hidden');
+        }
+
+        function getEmployeeDataHTML() {
+            const data = [
+                { id: "sap_id", field: "ID aus SAP", description: "Eindeutige ID aus SAP, dient als primärer Schlüssel.", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>` },
+                { id: "firstname", field: "Vorname", description: "Der offizielle Vorname des Mitarbeiters.", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>` },
+                { id: "lastname", field: "Nachname", description: "Der offizielle Nachname des Mitarbeiters.", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>` },
+                { id: "department", field: "Stamm-Abteilung", description: "Die Hauptabteilung, der der Mitarbeiter zugeordnet ist.", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>` },
+                { id: "work_time", field: "Sollarbeitszeit", description: "Die vertraglich geplante Arbeitszeit in Minuten.", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>` },
+                { id: "personal_id", field: "Personalnummer (Anzeige)", description: "Interne Personalnummer zur Anzeige in shyftplan.", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" /></svg>` },
+                { id: "sso_only", field: "Nur SSO-Anmeldung", description: "Legt fest, ob nur ein Login via Single Sign-On möglich ist.", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>` },
+                { id: "entry_date", field: "Eintrittsdatum", description: "Datum des Vertragsbeginns basierend auf HR events.", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>` },
+                { id: "exit_date", field: "Austrittsdatum", description: "Datum des Vertragsendes für das Löschkonzept.", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zM17 17l-5-5-5 5m10-8l-5-5-5 5" /></svg>` },
+                { id: "email", field: "E-Mail-Adresse", description: "E-Mail für Login und System-Benachrichtigungen.", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>` },
+                { id: "action_param", field: "Aktions-Parameter", description: "Steuert automatisierte Aktionen (z.B. archivieren, löschen).", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>` },
+                { id: "more_fields", field: "Weitere Felder", description: "Zusätzliche Felder werden direkt in shyftplan gepflegt.", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>` }
+            ];
+            const dataItemsHTML = data.map(item => `
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0 text-sky-400 pt-1">${item.icon}</div>
+                    <div><h3 class="font-semibold text-white">${item.field}</h3><p class="mt-1 text-slate-300 text-sm">${item.description}</p></div>
+                </div>
+            `).join('');
+            return `
+                <header class="text-center mb-8">
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Überblick der Mitarbeiter-Stammdaten</h2>
+                    <p class="mt-2 text-base text-slate-300">Eine Übersicht der aus SAP importierten Felder.</p>
+                </header>
+                <div class="p-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">${dataItemsHTML}</div>
+            `;
+        }
+
+        function showEmployeeDataModal() {
+            const content = getEmployeeDataHTML();
+            modalContent.innerHTML = content;
+            slideModalContentWrapper.className = `bg-slate-800 border border-slate-600 text-white rounded-2xl p-6 md:p-8 shadow-2xl w-full relative max-h-[90vh] overflow-y-auto max-w-4xl`;
+            slideModal.classList.remove('hidden');
+        }
+
+        function populateEndScreenCards() {
+            const scopeStepIndex = steps.findIndex(s => s.isIntegrationScope);
+            const effortStepIndex = steps.findIndex(s => s.isEffortSummary);
+            
+            const cardsByCategory = [
+                {
+                    category: 'Allgemein',
+                    color: '#9ca3af', // slate-400
+                    items: [
+                        { title: 'Tour wiederholen', icon: icons.replay, action: 'replay' },
+                        { title: 'Tech. Voraussetzungen', icon: icons.prerequisites, action: 'showPrerequisites' },
+                        { title: 'Prozess im Überblick', icon: icons.overview, stepIndex: steps.findIndex(s => s.isSimpleSummary) },
+                    ]
+                },
+                {
+                    category: 'Phase 1: Vorbereitung',
+                    color: '#38bdf8', // sky-400
+                    items: [
+                        { title: 'Integrations-Umfang', icon: icons.scope, stepIndex: scopeStepIndex },
+                        { title: 'Mitarbeiter-Stammdaten', icon: icons.employeeData, action: 'showEmployeeData' },
+                        { title: 'Projektplan', icon: icons.preparation, stepIndex: steps.findIndex(s => s.isProjectPlan) }
+                    ]
+                },
+                {
+                    category: 'Phase 2-3: Installation & Konfiguration',
+                    color: '#a78bfa', // violet-400
+                    items: [
+                        { title: 'Technische Komponenten', icon: icons.components, action: 'showComponents' }
+                    ]
+                },
+                {
+                    category: 'Phase 4-5: Test & Go-Live',
+                    color: '#f472b6', // rose-400
+                    items: [
+                        { title: 'Testkatalog', icon: icons.testing, stepIndex: steps.findIndex(s => s.isTestCatalog) },
+                        { title: 'Aufwandsübersicht', icon: icons.effort, stepIndex: effortStepIndex }
+                    ]
+                }
+            ];
+
+            const legendHTML = `<div class="sm:col-span-2 lg:col-span-3 w-full flex justify-center items-center gap-x-4 sm:gap-x-6 gap-y-2 mb-6 text-xs sm:text-sm flex-wrap text-slate-600">${cardsByCategory.map(c => `<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm" style="background-color: ${c.color};"></div><span>${c.category}</span></div>`).join('')}</div>`;
+            const cardsHTML = cardsByCategory.flatMap(category => category.items.map(item => ({ ...item, color: category.color }))).map(card => `<div class="bg-slate-50 p-4 rounded-lg hover:bg-slate-100 hover:shadow-md cursor-pointer transition flex flex-col items-center justify-center text-center border-l-4" style="border-color: ${card.color};" data-step-index="${card.stepIndex !== undefined ? card.stepIndex : ''}" data-action="${card.action || ''}"><div class="w-10 h-10 sm:w-12 sm:h-12 text-slate-700 mx-auto mb-3">${card.icon}</div><h3 class="font-bold text-sm sm:text-base text-slate-800">${card.title}</h3></div>`).join('');
+            endScreenCards.innerHTML = legendHTML + cardsHTML;
+        }
+
+         function initializeTourData() {
+             config = {
+                customerName: "Bruker",
+                customerContact: 'liebes Bruker Projektteam',
+                customerLogo: "assets/images/customer-logo.png",
+                shyftplanLogo: "assets/images/shyftplan-logo.svg",
+                calendlyLink: "https://meetings-eu1.hubspot.com/shyftplan/navigation?uuid=29d38a58-5e44-4121-8f09-8f2a81954e8e",
+                ae: { name: "Moritz Klose", image: "https://ca.slack-edge.com/T0T53AXB4-U04MDHK0U5A-6645908912f1-512", title: "Account Executive" },
+                pl: { name: "Max Göbel", image: "https://ca.slack-edge.com/T0T53AXB4-U06TBK58QG4-f1afa08f94ec-512", title: "Projektleiter" }
+            };
+            
+            // Populate Start Screen
+            document.getElementById('start-screen-customer-logo').src = config.customerLogo;
+            document.getElementById('intro-overlay-customer-logo').src = config.customerLogo;
+            document.getElementById('end-screen-customer-logo').src = config.customerLogo;
+            document.getElementById('start-screen-shyftplan-logo').src = config.shyftplanLogo;
+            document.getElementById('intro-overlay-shyftplan-logo').src = config.shyftplanLogo;
+            document.getElementById('end-screen-shyftplan-logo').src = config.shyftplanLogo;
+
+            document.getElementById('start-screen-customer-name').textContent = config.customerName;
+            document.getElementById('intro-overlay-customer-name').textContent = config.customerName;
+            
+            steps = createSteps(config);
+            populateEndScreenCards();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeTourData();
+            startTour();
+            
+            // Event Listeners
+            playButton.addEventListener('click', () => startTour());
+            overviewButton.addEventListener('click', showStartScreen);
+            skipToEndButton.addEventListener('click', showEndScreen);
+            startSkipToEndButton.addEventListener('click', showEndScreen);
+            
+            prevButton.addEventListener('click', () => handleManualNavigation(-1));
+            nextButton.addEventListener('click', () => handleManualNavigation(1));
+            
+            speedControls.addEventListener('click', e => {
+                if (e.target.matches('.speed-button')) {
+                    playbackRate = parseFloat(e.target.dataset.speed);
+                    speedControls.querySelector('.active').classList.remove('active');
+                    e.target.classList.add('active');
+                }
+            });
+
+            // End Screen Card Listeners
+            endScreenCards.addEventListener('click', (e) => {
+                const card = e.target.closest('div[data-action], div[data-step-index]');
+                if (!card) return;
+
+                const action = card.dataset.action;
+                const stepIndex = card.dataset.stepIndex;
+
+                if (action === 'replay') {
+                    startTour();
+                } else if (action === 'contact') {
+                     if (config.calendlyLink) window.open(config.calendlyLink, '_blank');
+                } else if (action === 'showComponents') {
+                    showComponentsModal();
+                } else if (action === 'showPrerequisites') {
+                    showPrerequisitesModal();
+                } else if (action === 'showEmployeeData') {
+                    showEmployeeDataModal();
+                } else if (stepIndex) {
+                    showSlideInModal(parseInt(stepIndex, 10));
+                }
+            });
+            
+            // Modal listener
+            closeModalButton.addEventListener('click', () => slideModal.classList.add('hidden'));
+        });
+
+    </script>
+</body>
+</html>
