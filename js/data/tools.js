@@ -874,7 +874,7 @@ export const toolPages = {
             </style>
 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto w-4/5 mx-auto">
                 <table class="w-full text-left min-w-[800px] use-case-table">
-                    <thead class="text-xs text-slate-700 bg-slate-50">
+                    <thead class="text-sm text-slate-700 bg-slate-50">
                         <tr>
                             <th class="px-6 py-3 font-semibold w-[30%]">Kategorie</th>
                             <th class="px-6 py-3 font-semibold w-[60%]">Arbeitsschritt</th>
@@ -886,11 +886,14 @@ export const toolPages = {
                         <tr>
                             <td rowspan="2" class="px-6 py-4 font-semibold text-slate-800 category-cell border-r border-slate-200 align-middle">
                                 <div class="category-line" style="background-color: #9865f6;"></div>
-                                <span class="pl-4">Schichtplananlage inkl. Bedarfsplanung</span>
+                                <div class="pl-4">
+                                    <span>Schichtplananlage</span><br>
+                                    <span class="ml-0">inkl. Bedarfsplanung</span>
+                                </div>
                             </td>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="file-plus-2" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
+                                    <i data-lucide="calendar-plus" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Leeren Schichtplan erstellen & Maschinen Vorplanen</span>
                                 </div>
                             </td>
@@ -927,7 +930,7 @@ export const toolPages = {
                          <tr>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
-                                    <i data-lucide="search-users" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
+                                    <i data-lucide="search" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
                                     <span>Besetzung der Mitarbeiter auf den Schichten prüfen</span>
                                 </div>
                             </td>
@@ -936,7 +939,7 @@ export const toolPages = {
                             </td>
                         </tr>
                         <tr>
-                            <td rowspan="4" class="px-6 py-4 font-semibold text-slate-800 category-cell border-r border-slate-200 align-middle">
+                            <td rowspan="3" class="px-6 py-4 font-semibold text-slate-800 category-cell border-r border-slate-200 align-middle">
                                 <div class="category-line" style="background-color: #ff8eb7;"></div>
                                 <span class="pl-4">Freigabe und Veröffentlichung</span>
                             </td>
@@ -972,7 +975,11 @@ export const toolPages = {
                                 <button data-action="open-video-modal" data-full-title="Schichtplan veröffentlichen" data-video-src="assets/videos/video7.mp4" data-info="<p><strong>Für die Prüfung relevante Filteroptionen im Schichtplan</strong></p><ul class='info-list'><li>Nicht eingeplante Mitarbeiter</li><li>Offene Schichten</li><li>Mitarbeiterübersicht</li></ul><p class='mt-4'><strong>Veröffentlichung des Schichtplans</strong><br>Nach der Veröffentlichung sind alle Änderungen an dem Schichtplan in Echtzeit dargestellt und für Mitarbeiter einsehbar.</p><p class='mt-4'><strong>Weitere Anwesenheiten</strong><br>Seminare und Dienstreisen werden durch einen eigenen Arbeitsbereich abgebildet.</p>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
-                        <tr>
+                         <tr>
+                            <td rowspan="6" class="px-6 py-4 font-semibold text-slate-800 category-cell border-r border-slate-200 align-middle">
+                                <div class="category-line" style="background-color: #f59e0b;"></div>
+                                <span class="pl-4">Laufende Anpassungen</span>
+                            </td>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
                                     <i data-lucide="plane" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
@@ -983,11 +990,7 @@ export const toolPages = {
                                 <button data-action="open-video-modal" data-full-title="Urlaubsanträge berücksichtigen" data-video-src="assets/videos/video8.mp4" data-info="<ul class='info-list'><li>Mitarbeiter können Urlaube oder Gleittage über den Browser und über die App einreichen</li><li>Planer können Urlaubsanträge in shyftplan annehmen bzw. ablehnen - akzeptierte Anträge werden nach SAP übertragen</li><li>Sonderabwesenheiten und Krankheiten (z.B. Arbeitsunfall, Jubiläum, Elternzeit) werden in SAP eingetragen und nach shyftplan übertragen</li><li>Individuelle Regelungen bei Krankheiten werden weiterhin von HR beachtet und hinterlegt (bspw. Prüfung von Kurzkrank)</li></ul>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
-                         <tr>
-                            <td rowspan="5" class="px-6 py-4 font-semibold text-slate-800 category-cell border-r border-slate-200 align-middle">
-                                <div class="category-line" style="background-color: #f59e0b;"></div>
-                                <span class="pl-4">Laufende Anpassungen</span>
-                            </td>
+                        <tr>
                             <td class="px-4 py-4 text-slate-600">
                                 <div class="flex items-center">
                                     <i data-lucide="check-check" class="h-5 w-5 mr-3 text-purple-600 flex-shrink-0"></i>
