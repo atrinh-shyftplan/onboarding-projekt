@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCM Integration Technical Survey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Customizing Tailwind CSS with shyftplan brand colors
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sp-purple': '#6f42c1', // shyftplan-purple
+                        'sp-purple-dark': '#5b21b6',
+                        'sp-purple-light': '#f5f3ff',
+                        'sp-dark-blue': '#25486f',
+                        'sp-medium-blue': '#77a0f6',
+                        'sp-light-blue': '#aec7f8',
+                        'sp-dark-gray': '#334155', // slate-700
+                        'sp-medium-gray': '#64748b', // slate-500
+                        'sp-light-gray': '#f1f5f9', // slate-100
+                        'sp-border-color': '#dee2e6',
+                        'sp-red': '#dc3545',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-sp-light-gray font-sans text-sp-dark-gray">
+
+    <div class="flex h-screen">
+        <!-- Sidebar Navigation -->
+        <aside class="w-72 bg-white border-r border-slate-200 flex-shrink-0">
+            <div class="p-5 border-b border-sp-border-color">
+                <h2 class="text-xl font-semibold text-sp-dark-blue">Interface Technical Survey</h2>
+            </div>
+            <nav class="p-3">
+                <ul id="menu" class="space-y-1">
+                    <li>
+                        <a href="#instructions" class="menu-link active flex items-center px-4 py-2.5 text-sm font-medium text-white bg-sp-purple rounded-lg shadow-md shadow-purple-500/20 transition-colors duration-200">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                           <span>Instructions</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#survey" class="menu-link flex items-center px-4 py-2.5 text-sm font-medium text-sp-dark-gray hover:bg-sp-purple-light rounded-lg transition-colors duration-200">
+                           <span class="flex items-center justify-center w-5 h-5 text-xs font-bold text-sp-purple bg-sp-purple-light rounded-full mr-3 ring-1 ring-sp-purple">1</span>
+                           <span>Technical Survey</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#actions" class="menu-link flex items-center px-4 py-2.5 text-sm font-medium text-sp-dark-gray hover:bg-sp-purple-light rounded-lg transition-colors duration-200">
+                           <span class="flex items-center justify-center w-5 h-5 text-xs font-bold text-sp-purple bg-sp-purple-light rounded-full mr-3 ring-1 ring-sp-purple">2</span>
+                           <span>Actions</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#exclusions" class="menu-link flex items-center px-4 py-2.5 text-sm font-medium text-sp-dark-gray hover:bg-sp-purple-light rounded-lg transition-colors duration-200">
+                           <span class="flex items-center justify-center w-5 h-5 text-xs font-bold text-sp-purple bg-sp-purple-light rounded-full mr-3 ring-1 ring-sp-purple">3</span>
+                           <span>Exclusions</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8 overflow-y-auto">
+            <!-- Instructions Section -->
+            <div id="instructions" class="content-section active">
+                <h1 class="text-3xl font-bold text-slate-800 mb-6">Instructions</h1>
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200/80">
+                    <h3 class="text-xl font-semibold text-sp-dark-blue mb-4">Instructions for Completing the HCM Integration Technical Survey</h3>
+                    <p class="text-sp-medium-gray mb-4">The actions in this overview must be completed for a successful shyftplan x HCM integration:</p>
+                    <ol class="list-decimal list-inside space-y-2 text-sp-medium-gray">
+                        <li><b>Technical Survey</b> – Please answer all questions in this tab as completely as possible.</li>
+                        <li><b>Actions</b> – Review, confirm, and complete the listed actions.</li>
+                        <li><b>Exclusions</b> – Review and confirm the listed exclusions.</li>
+                    </ol>
+                    <p class="mt-4 text-sp-medium-gray">If any points are unclear or you are unsure how to proceed, please do not hesitate to contact us. It is important to clarify any questions early to ensure a smooth integration process.</p>
+                </div>
+            </div>
+
+            <!-- Technical Survey Section -->
+            <div id="survey" class="content-section">
+                <h1 class="text-3xl font-bold text-slate-800 mb-6">Technical Survey (to be answered)</h1>
+                <div class="bg-white rounded-xl shadow-lg border border-slate-200/80 overflow-hidden">
+                    <table class="w-full text-sm text-left text-sp-dark-gray">
+                        <thead class="bg-sp-purple-light text-xs text-sp-dark-blue uppercase tracking-wider">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 font-semibold">Question</th>
+                                <th scope="col" class="px-6 py-4 font-semibold">Status</th>
+                                <th scope="col" class="px-6 py-4 font-semibold">Answer (Customer)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">What is your current SAP NetWeaver version?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4">SAP NETWEAVER    7.4    30 (07/2023)    sap.com    SAP NETWEAVER 7.4</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">Which SAP-BASIS version are you running?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4">SAP_BASIS    740    0030    SAPKB74030    SAP Basiskomponente</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">Which SAP-ABA version are you running?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4"></td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">Which SAP-HCM component version are you running?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4">SAP_HR    604    0218    SAPKE604L8    Personalwirtschaft</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">Which SAP Kernel version are you running?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4"></td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">Is your SAP HCM system an on-premise or hosted private cloud system ?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4">On Prem</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">Please describe your SAP HCM landscape (e.g., Development, QA, Production) - is it 2 tier (DEV and Prod) or 3 (dev, tst, prod) or 4 tier (dev, tst, qas, Prod) ?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4">3tier</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">How many BTP CPI tenants will be provided - 2 tier or 3 tier (sub-account)?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4"></td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">Is SAP Cloud Connector installed and configured?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4">yes</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">Which Cloud Connector version is in use?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4"></td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">Do you already have an SAP BTP CPI tenant (on Cloud Foundry) ?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4">yes</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">Which CPI Package do you use? (Basic or Standard)</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4"></td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">Who maintains and deploys iFlows in BTP CPI (Integration Suite)? Westernacher or own resource?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4">Team Hans-Peter Bruder</td>
+                            </tr>
+                            <tr class="hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">Is your SAP HCM system planned to connected via middleware (e.g., SAP CPI, PI/PO) or will it be direct HTTP connection used (via WebDispatcher only) ?</td>
+                                <td class="px-6 py-4"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4">CPI</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Actions Section -->
+            <div id="actions" class="content-section">
+                <h1 class="text-3xl font-bold text-slate-800 mb-6">Actions (to complete)</h1>
+                 <div class="bg-white rounded-xl shadow-lg border border-slate-200/80 overflow-hidden">
+                    <table class="w-full text-sm text-left text-sp-dark-gray" style="table-layout: fixed;">
+                        <thead class="bg-sp-purple-light text-xs text-sp-dark-blue uppercase tracking-wider">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 font-semibold w-1/12">Area</th>
+                                <th scope="col" class="px-6 py-4 font-semibold w-5/12">Action</th>
+                                <th scope="col" class="px-6 py-4 font-semibold w-1/12">Status</th>
+                                <th scope="col" class="px-6 py-4 font-semibold w-5/12">Remarks (Customer)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-sp-border-color bg-sp-light-gray"><td class="px-6 py-3 font-semibold text-sp-dark-blue" colspan="4">HCM</td></tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">HCM</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Ensure your SAP HCM system to use TLS 1.2 for all outbound HTTPS communication. This is a mandatory security requirement for the shyftconnect API.
+
+Additional Note: It is necessary to enable communication based on TLS 1.2 (mandatory for shyftconnect API), which requires updating the SAPCRYPTOLIB library to at least version 8.5.4 or the latest available version (e.g., 8.5.50).     This update is described in section 7 of SAP Note https://me.sap.com/notes/510007 and requires changes to the relevant instance parameters in transactions RZ10 and RZ11, as well as possibly updating the SAP kernel to the latest version.</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 align-top">Basis AFO Done</td>
+                            </tr>
+                             <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">HCM</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Only for direct communiction without BTP: Whitelist shyftplan IP adresses for SAP HCM Server (and possible firewalls) and allow TCP/HTTPS traffic
+
+If No fixed IPs: use an FQDN-based allow-list and/or dynamic IP updates.
+
+While hosted on AWS, auto-update rules from AWS West Europe IP ranges (parse ip-ranges.json)
+
+-enforce TLS hostname/SNI validation (and your callback check) to ensure you’re truly talking to shyftplan.com.
+References for automation: AWS: https://ip-ranges.amazonaws.com/ip-ranges.json</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4 align-top">Basis AFO</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">HCM</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Whitelist shyftplan IP adresses for SAP BTP CPI (and possible firewalls) and allow TCP/HTTPS traffic</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4 align-top">Dieter Rüffler</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">HCM</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Only for direct communiction w/o BTP: Import shyftplan.com SSL HTTPS Certificate into SAP HCM using transaction STRUST
+For communication with BTP: Import SSL HTTPS Certificate that allows to verify BTP URL into SAP HCM using transaction STRUST</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4 align-top">Afo Basis</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">HCM</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Enable change monitoring (data loggin) for following the infotypes:
+- IT0000
+- IT0001
+- IT0002
+- IT0007
+- IT0105
+- IT2001
+- IT2002
+- IT2006
+- IT2007</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4 align-top">Only for 1136 and only for production ( limited on certain cos centers)</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">HCM</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Setup Technical User 1: Setup one technical user to collect data via jobs and put into queues - B - System type (with SAP_ALL, no possibillity to logon with it, just technical role)</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4 align-top">MCG Ticket</td>
+                            </tr>
+                             <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">HCM</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Setup Technical User 2: Setup user to communicate (outside), no possibility to logon in dialog mode, with SAP_ALL) - with type: C- Communication - user. (to send data with out http client connectivity to BTP/External services)</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-red-100 text-sp-red text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Open</span></td>
+                                <td class="px-6 py-4 align-top">MCG Ticket</td>
+                            </tr>
+
+                            <tr class="border-b border-sp-border-color bg-sp-light-gray"><td class="px-6 py-3 font-semibold text-sp-dark-blue" colspan="4">BTP</td></tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">BTP Preparation</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Setup or activate BTP incl. CPI ( for setting up iFlows for the shyftplan integration)</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 align-top">...since years....</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">BTP Preparation</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Prepare a total of 4 URLs (test + production for both absences and evaluations from shyftplan), and securely store them.
+
+Each URL must be the target for payload transfer.
+If Basic Auth is needed, use format:
+https://username:password@yourcompany.com/path
+Only username and password must be percent-encoded (RFC 3986), not the full URL.</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">test: absences       https://test-cf-ea-mycloud-bruker.it-cpi001-rt.cfapps.eu10.hana.ondemand.com/http/shyftplan/absences/v1
+test: evaluations    https://test-cf-ea-mycloud-bruker.it-cpi001-rt.cfapps.eu10.hana.ondemand.com/http/shyftplan/evaluations/v1
+prod: absences      https://prod-cf-ea-mycloud-bruker.it-cpi001-rt.cfapps.eu10.hana.ondemand.com/http/shyftplan/absences/v1
+prod: evaluations   https://prod-cf-ea-mycloud-bruker.it-cpi001-rt.cfapps.eu10.hana.ondemand.com/http/shyftplan/evaluations/v1</td>
+                            </tr>
+                             <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">BTP Preparation</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Ensure usage or setup Basic Authentication within your BTP CPI tenant</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 align-top">...since years....</td>
+                            </tr>
+                             <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">BTP Preparation</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Ensure usage or setup (if needed) of Cloud Connector</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 align-top">...since years....</td>
+                            </tr>
+                             <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">BTP Preparation</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Ensure the Integration Suite service is active and that the ""Integration and APIs"" capability is accessible to the user who sets up the integration (internal or from westernacher)</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 align-top">...since years....</td>
+                            </tr>
+                             <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">BTP Preparation</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Optional: Clarify use of IP pinning (whitelisting the shyftplan server IP address) is mandatory for inbound connections to your CPI tenant. Inform our project team of the outcome:
+If YES: Please request the source IP address from us that needs to be whitelisted.
+If NO: Please confirm in writing (e.g., via email) that no IP whitelisting is required.</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 align-top">No whitelisting required
+...since years....</td>
+                            </tr>
+                             <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">BTP Setup DEV/TEST</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Step 1: Connect cloud connecter to specific SAP HCM on_premise backend and set ""Location ID"" & test onnectivity  (in IS/Int.Suite ""Connectivity Tests"" app - has to be success for this ""Location ID</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 align-top whitespace-pre-wrap">What is the name of our SAP HCM ? BRUKER HCM {D|X|P}  They are connected to which SAP Cloud Connector? SCC
+dev:  BHD - SCC: Test CF myCloud - Cloud-Connectors   FRA-TEST
+test:  BHX - SCC: Test CF myCloud - Cloud-Connectors   FRA-TEST
+prod: BHP - SCC: Prod CF myCloud - Cloud-Connectors  <No Name></td>
+                            </tr>
+                             <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">BTP Setup DEV/TEST</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Step 2: BTP Setup DEV/TEST    Setup  cloud connecter to specific SAP HCM on_premise backend and set ""Location ID""</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 align-top whitespace-pre-wrap">TEST  Connector ID: 60C90DC0947B11ECB986F3BF0AFB98CD
+PROD Connector ID: 82565DA1ED3111EAA93CE1320AFB98C9</td>
+                            </tr>
+                             <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">BTP Setup DEV/TEST</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Step 3: Create a new, empty integration package named ""[Project Name] - DEV"" for our development work in the integration suite (""Integration and APIs"" capability needs to be accessible to the users)</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 align-top whitespace-pre-wrap">Integration Packages:
+test:  https://test-cf-ea-mycloud-bruker.integrationsuite.cfapps.eu10.hana.ondemand.com/shell/design/contentpackage/Shyftplan?section=HEADER
+prod: https://prod-cf-ea-mycloud-bruker.integrationsuite.cfapps.eu10.hana.ondemand.com/shell/design/contentpackage/Shyftplan?section=HEADER
+....on premise:  3 System landscape: DEV, TEST, PROD  ...in cloud 2: STAGING, PROD  .. to enforce ""3"" in cloud > 2 packages in staging</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">BTP Setup DEV/TEST</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Step 4: Confirm and Enable Authentication Methods:
+
+For inbound messages: Enable Basic Authentication (using Client ID and Client Secret) as a valid method for calling integration flows.
+
+For role-based access: Identify the specific security role required to send messages to an integration flow (e.g., the standard ESBMessaging.send role or a custom equivalent). Provide the exact name of this role to our team.</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 align-top whitespace-pre-wrap">OAuth2 Client Credentials
+
+Role: ESBMessaging.send</td>
+                            </tr>
+                            <tr class="border-b border-sp-border-color hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">BTP Setup QAS</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Repeat Step 1-4 from above and additional and adjust it for your QAS requirements +
+
+Enable OAuth 2.0 as an authentication method on your BTP QAS sub-account.
+
+Provide our team with the token URL and necessary credentials so we can perform a connectivity test. This is critical for validating the production setup in advance.</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 align-top whitespace-pre-wrap">There is a POSTMAN Portal workspace with shareable collections containing requests  - Many Options to share:
+- Export as Collection v2
+- Export as Collection v2.1
+- Export JSON
+- Share link  <-- smartest way to do joint dev/test</td>
+                            </tr>
+                            <tr class="hover:bg-sp-light-gray">
+                                <td class="px-6 py-4 align-top">BTP Setup Prod</td>
+                                <td class="px-6 py-4 whitespace-pre-wrap">Repeat Step 1-4 from above and additional and adjust it for your PROD requirements</td>
+                                <td class="px-6 py-4 align-top"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4 align-top"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Exclusions Section -->
+            <div id="exclusions" class="content-section">
+                <h1 class="text-3xl font-bold text-slate-800 mb-6">Exclusions (to be confirmed)</h1>
+                 <div class="bg-white rounded-xl shadow-lg border border-slate-200/80 overflow-hidden">
+                    <table class="w-full text-sm text-left text-sp-dark-gray">
+                        <thead class="bg-sp-purple-light text-xs text-sp-dark-blue uppercase tracking-wider">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 font-semibold">Area</th>
+                                <th scope="col" class="px-6 py-4 font-semibold">Topic</th>
+                                <th scope="col" class="px-6 py-4 font-semibold">Status</th>
+                                <th scope="col" class="px-6 py-4 font-semibold">Remarks (Customer)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-sp-light-gray">
+                                <td class="px-6 py-4">HCM</td>
+                                <td class="px-6 py-4">Westernacher interface logic does NOT support use of old leave solution in SAP HCM, based on IT0005</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Done</span></td>
+                                <td class="px-6 py-4"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuLinks = document.querySelectorAll('.menu-link');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            // Set first link and section to active on page load
+            const firstLink = document.querySelector('.menu-link');
+            const firstSection = document.querySelector('.content-section');
+            if(firstLink) firstLink.classList.add('active', 'bg-sp-purple', 'text-white', 'shadow-md', 'shadow-purple-500/20');
+            if(firstSection) firstSection.classList.add('active');
+
+
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+
+                    // Manage active classes for menu links
+                    menuLinks.forEach(l => {
+                        l.classList.remove('active', 'bg-sp-purple', 'text-white', 'shadow-md', 'shadow-purple-500/20');
+                        l.classList.add('text-sp-dark-gray', 'hover:bg-sp-purple-light');
+                    });
+                    this.classList.add('active', 'bg-sp-purple', 'text-white', 'shadow-md', 'shadow-purple-500/20');
+                    this.classList.remove('text-sp-dark-gray', 'hover:bg-sp-purple-light');
+
+                    // Show/hide content sections
+                    const targetId = this.getAttribute('href').substring(1);
+                    contentSections.forEach(section => {
+                        if (section.id === targetId) {
+                            section.classList.add('active');
+                        } else {
+                            section.classList.remove('active');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
