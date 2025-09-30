@@ -893,7 +893,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>1</span>Leeren Schichtplan erstellen & Maschinen Vorplanen" data-video-src="assets/videos/video1.mp4" data-info="Hinweise zum Erstellen und Vorplanen." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>1</span>Leeren Schichtplan erstellen & Maschinen Vorplanen" data-video-src="assets/videos/video1.mp4" data-info="<ul><li>Schichtrotationen anwenden: Erzeugen von leeren Schichten (z.B. Früh/Spät/Nacht)</li><li>Feiertagsregelungen bei Schicht-Modellen</li><li>18 Schicht-Modell = Schichtherstellung für Feiertage verhindern (aus dem Feiertag heraus arbeiten)</li><li>15 Schicht-Modell = Schichtherstellung für Feiertage verhindern (in den Feiertag hinein arbeiten)</li></ul>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -904,7 +904,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                               <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>2</span>Zusatzinformationen im Schichtplan ergänzen" data-video-src="assets/videos/video2.mp4" data-info="Hinweise zum Ergänzen von Zusatzinformationen." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                               <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>2</span>Zusatzinformationen im Schichtplan ergänzen" data-video-src="assets/videos/video2.mp4" data-info="<ul><li>Schichtetiketten: Mit Schichtetiketten können Zusatzinformationen an die Mitarbeiter weitergegeben werden</li><li>Tagesinfo: Die Tagesinfo kann verwendet werden, um allgemeine Infos zu dem Schichtplan anzeigen zu lassen</li></ul>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -919,7 +919,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                               <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>3</span>Schichten mit Mitarbeiter besetzen" data-video-src="assets/videos/video3.mp4" data-info="Hinweise zum Besetzen von Schichten." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                               <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>3</span>Schichten mit Mitarbeiter besetzen" data-video-src="assets/videos/video3.mp4" data-info="<ul><li>Standard-Zuordnungspräferenzen für die Automatisierung:</li><li>- Versuche Stammarbeitsplätze zuzuweisen</li><li>- Ausschließlich passende Schichttypen zuweisen</li><li>- Wenigste Arbeitsbereiche priorisieren</li><li>- Schicht-Überschneidungen ausschließen</li><li>- Abwesende Mitarbeiter nicht verplanen</li></ul>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                          <tr>
@@ -930,7 +930,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>4</span>Besetzung der Mitarbeiter auf den Schichten prüfen" data-video-src="assets/videos/video4.mp4" data-info="Hinweise zur Prüfung der Schichtbesetzung." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>4</span>Besetzung der Mitarbeiter auf den Schichten prüfen" data-video-src="assets/videos/video4.mp4" data-info="<ul><li>Für die Prüfung relevante Filteroptionen im Schichtplan</li><li>- Nicht eingeplante Mitarbeiter</li><li>- Offene Schichten</li><li>- Mitarbeiterübersicht</li></ul><p class='mt-2'>Veröffentlichung des Schichtplans: Nach der Veröffentlichung sind alle Änderungen an dem Schichtplan in Echtzeit dargestellt und für Mitarbeiter einsehbar.</p><p class='mt-2'>Weitere Anwesenheiten: Seminare und Dienstreisen werden durch einen eigenen Arbeitsbereich abgebildet.</p>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -945,7 +945,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>5</span>Mehrarbeiten der Mitarbeiter einplanen" data-video-src="assets/videos/video5.mp4" data-info="Hinweise zum Einplanen von Mehrarbeit." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>5</span>Mehrarbeiten der Mitarbeiter einplanen" data-video-src="assets/videos/video5.mp4" data-info="<ul><li>Die Genehmigung und Spezifizierung von Mehrarbeiten erfolgt über Auswertungsetiketten</li><li>- Gleitzeit mit Zuschlägen</li><li>- Einarbeitung</li><li>- Besprechung</li><li>- Auszahlung</li><li>- Persl. bedingte Vertretung</li><li>- Betriebsbedingte Vetretung</li><li>- Verleih</li></ul>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -956,7 +956,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                               <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>6</span>Freigabe vom Betriebsrat vorbereiten" data-video-src="assets/videos/video6.mp4" data-info="Hinweise zur Vorbereitung der Betriebsratsfreigabe." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                               <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>6</span>Freigabe vom Betriebsrat vorbereiten" data-video-src="assets/videos/video6.mp4" data-info="<p>Geplante Mehrarbeitsschichten für (z.B. Wochenende) können über manuelle Anlage von Schichten und dem Schicht-Etikett 'Mehrarbeit' angelegt und markiert werden.</p>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                          <tr>
@@ -967,7 +967,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>7</span>Schichtplan veröffentlichen" data-video-src="assets/videos/video7.mp4" data-info="Hinweise zum Veröffentlichen des Schichtplans." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>7</span>Schichtplan veröffentlichen" data-video-src="assets/videos/video7.mp4" data-info="<ul><li>Für die Prüfung relevante Filteroptionen im Schichtplan</li><li>- Nicht eingeplante Mitarbeiter</li><li>- Offene Schichten</li><li>- Mitarbeiterübersicht</li></ul><p class='mt-2'>Veröffentlichung des Schichtplans: Nach der Veröffentlichung sind alle Änderungen an dem Schichtplan in Echtzeit dargestellt und für Mitarbeiter einsehbar.</p><p class='mt-2'>Weitere Anwesenheiten: Seminare und Dienstreisen werden durch einen eigenen Arbeitsbereich abgebildet.</p>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -978,7 +978,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>8</span>Urlaubsanträge berücksichtigen" data-video-src="assets/videos/video8.mp4" data-info="Hinweise zur Berücksichtigung von Urlaubsanträgen." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>8</span>Urlaubsanträge berücksichtigen" data-video-src="assets/videos/video8.mp4" data-info="<ul><li>Mitarbeiter können Urlaube oder Gleittage über den Browser und über die App einreichen</li><li>Planer können Urlaubsanträge in shyftplan annehmen bzw. ablehnen - akzeptierte Anträge werden nach SAP übertragen</li><li>Sonderabwesenheiten und Krankheiten (z.B. Arbeitsunfall, Jubiläum, Elternzeit) werden in SAP eingetragen und nach shyftplan übertragen</li><li>Individuelle Regelungen bei Krankheiten werden weiterhin von HR beachtet und hinterlegt (bspw. Prüfung von Kurzkrank)</li></ul>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                          <tr>
@@ -993,7 +993,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>9</span>Mehrarbeitsgenehmigungen und Zeitkorrekturen berücksichtigen" data-video-src="assets/videos/video9.mp4" data-info="Hinweise zu Mehrarbeitsgenehmigungen und Zeitkorrekturen." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>9</span>Mehrarbeitsgenehmigungen und Zeitkorrekturen berücksichtigen" data-video-src="assets/videos/video9.mp4" data-info="<p>Mitarbeiter können Mehrarbeiten und Zeitkorrekturen über eine Schichtauswertung mit Auswertungs-Tags beantragen.</p><p class='mt-2'>Relevante Auswertungen:</p><ul><li>- Gleitzeit mit Zuschlägen</li><li>- Einarbeitung</li><li>- Besprechung</li><li>- Auszahlung</li></ul><p class='mt-2'>Nur genehmigte Mehrarbeitsanträge werden an SAP synchronisiert.</p>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -1004,7 +1004,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>10</span>Stempelungen meiner Mitarbeiter einsehen" data-video-src="assets/videos/video10.mp4" data-info="Hinweise zum Einsehen von Stempelungen." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>10</span>Stempelungen meiner Mitarbeiter einsehen" data-video-src="assets/videos/video10.mp4" data-info="<ul><li>Eingestempelte Mitarbeiter werden Live-Statusübersicht dargestellt</li><li>In der Auswertungsübersicht werden pro Standort Schichten die Auswertung der Mitarbeiter dargestellt inkl. Filtermöglichkeiten (u.A. nach Status und Auswertungs-Merkmal)</li></ul>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -1015,7 +1015,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>11</span>Kurzfristige Abwesenheiten berücksichtigen" data-video-src="assets/videos/video11.mp4" data-info="Hinweise zum Umgang mit kurzfristigen Abwesenheiten." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>11</span>Kurzfristige Abwesenheiten berücksichtigen" data-video-src="assets/videos/video11.mp4" data-info="<p>Krankheiten werden ausschließlich in SAP von HR gepflegt. Um die Zeit zwischen Eingabe in SAP und Übertrag nach shyftplan zu überbrücken, wird eine Dummy-Abwesenheit 'Kurzfristige Abwesenheit' durch den Manager angelegt, um Mitarbeiter sauber auszuplanen.</p>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -1026,7 +1026,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>12</span>Bewerbung auf Schichten berücksichtigen" data-video-src="assets/videos/video12.mp4" data-info="Hinweise zur Berücksichtigung von Schichtbewerbungen." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>12</span>Bewerbung auf Schichten berücksichtigen" data-video-src="assets/videos/video12.mp4" data-info="<ul><li>Planer können Mitarbeitern Nachrichten über offene Schichten senden</li><li>Mitarbeiter kann Schichtbeitrittsanfragen über die Mobile App oder Browser stellen</li><li>Schichtbeitrittsanfragen werden im Dashboard und Schichtplan (Filter Schichtbeitrittsanfragen) angezeigt</li></ul>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -1037,7 +1037,7 @@ export const toolPages = {
                                 </div>
                             </td>
                             <td class="px-4 py-4 text-center">
-                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>13</span>Mitarbeiter kurzfristig umplanen" data-video-src="assets/videos/video13.mp4" data-info="Hinweise zur kurzfristigen Umplanung von Mitarbeitern." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>13</span>Mitarbeiter kurzfristig umplanen" data-video-src="assets/videos/video13.mp4" data-info="<ul><li>Planer können Mitarbeitern Nachrichten über offene Schichten senden</li><li>Mitarbeiter kann Schichtbeitrittsanfragen über die Mobile App oder Browser stellen</li><li>Schichtbeitrittsanfragen werden im Dashboard und Schichtplan (Filter Schichtbeitrittsanfragen) angezeigt</li></ul>" class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
                             </td>
                         </tr>
                     </tbody>
