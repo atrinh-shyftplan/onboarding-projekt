@@ -242,12 +242,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const videoModalContent = document.getElementById('video-modal-content');
     const videoModalClose = document.getElementById('video-modal-close');
     const videoPlayer = document.getElementById('video-modal-player');
+    const videoModalTitle = document.getElementById('video-modal-title');
+    const videoModalInfo = document.getElementById('video-modal-info');
 
-    function openVideoModal(videoSrc) {
+    function openVideoModal(videoSrc, title, info) {
+        // Use innerHTML for the title to render potential <strong> tags etc.
+        if (videoModalTitle) videoModalTitle.innerHTML = title || ''; // The title now contains the bubble
+        if (videoModalInfo) videoModalInfo.textContent = info || '';
+
         videoPlayer.src = videoSrc;
         videoModal.classList.remove('hidden');
         setTimeout(() => { // For transition
-            videoModal.classList.add('opacity-100');
+            videoModal.style.opacity = '1';
             videoModalContent.classList.add('scale-100');
         }, 10);
         videoPlayer.play();
@@ -255,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function closeVideoModal() {
         videoPlayer.pause();
-        videoModal.classList.remove('opacity-100');
+        videoModal.style.opacity = '0';
         videoModalContent.classList.remove('scale-100');
         setTimeout(() => {
             videoModal.classList.add('hidden');
@@ -266,7 +272,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.addEventListener('click', (e) => {
         const actionTarget = e.target.closest('[data-action="open-video-modal"], [data-click-action]');
         if (actionTarget?.dataset.action === 'open-video-modal') {
-            openVideoModal(actionTarget.dataset.videoSrc);
+            const videoSrc = actionTarget.dataset.videoSrc;
+            const title = actionTarget.dataset.fullTitle || actionTarget.dataset.title; // Support both attributes
+            const info = actionTarget.dataset.info;
+            openVideoModal(videoSrc, title, info);
         }
         // This listener is now separate to avoid conflicts
         if (actionTarget?.dataset.clickAction === 'open-org-chart') openContentModal('org-chart');

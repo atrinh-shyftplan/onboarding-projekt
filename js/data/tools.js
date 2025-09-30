@@ -859,172 +859,189 @@ export const toolPages = {
         }
     },
     'schichtplanungsprozess': {
-        title: 'Werkzeug: Schichtplanungsprozess',
-        actionTitle: 'Schichtplanungsprozess Bruker EAS',
+        title: 'Kernanwendungsfälle in der Praxis bei Bruker',
+        actionTitle: 'Kernanwendungsfälle in der Praxis bei Bruker',
         subtitle: 'Der definierte Prozess von der Planung bis zur laufenden Anpassung.',
         layout: 'customHtml',
         content: {
             html: `
             <style>
-                .schichtplanung-prozess-table {
-                    background-color: #ffffff; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
-                    overflow: hidden; border: 1px solid #e5e7eb;
-                }
-                .schichtplanung-prozess-table thead th { color: #374151; background-color: #f9fafb; font-weight: 600; }
-                .schichtplanung-prozess-table tbody tr:not(:last-child) { border-bottom: 1px solid #e5e7eb; }
-                .schichtplanung-prozess-table .category-cell { color: #111827; font-weight: 600; background-color: #f9fafb; border-right: 1px solid #e5e7eb; vertical-align: middle; position: relative; }
-                .schichtplanung-prozess-table .icon { width: 1.5rem; height: 1.5rem; margin-right: 0.75rem; flex-shrink: 0; color: #77a0f6; }
-                .schichtplanung-prozess-table .tag { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
-                .schichtplanung-prozess-table .tag-purple { background-color: #f5f3ff; color: #7c3aed; }
-                .schichtplanung-prozess-table .tag-blue { background-color: #eff6ff; color: #3b82f6; }
-                .schichtplanung-prozess-table .tag-pink { background-color: #fdf2f8; color: #db2777; }
+                .use-case-table tbody tr td { vertical-align: middle; }
+                .category-cell { position: relative; }
+                .category-line { position: absolute; left: 8px; top: 8px; bottom: 8px; width: 3px; border-radius: 9999px;}
             </style>
-            <div class="w-full overflow-x-auto">
-                <div class="schichtplanung-prozess-table min-w-[1000px]">
-                    <table class="w-full text-left">
-                        <thead class="text-xs tracking-wider">
-                            <tr>
-                                <th class="p-4 w-1/6">Kategorie</th>
-                                <th class="p-4 w-2/6">Prozessschritt</th>
-                                <th class="p-4 w-1/12">Wann</th>
-                                <th class="p-4 w-1/12">Wer</th>
-                                <th class="p-4 w-1/3">Bemerkungen</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm">
-                            <!-- Schichtplananlage -->
-                            <tr>
-                                <td class="py-4 pl-6 pr-4 category-cell" rowspan="3">
-                                    <div class="absolute left-2 top-2 bottom-2 w-1 bg-[#9865f6] rounded-full"></div>
-                                    <span>Schichtplananlage inkl. Bedarfsplanung</span>
-                                </td>
-                                <td class="p-4">
-                                    <div class="flex items-center">
-                                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                        <span>Schichtplananlage (Monatsplan) inkl. einheitlicher Namenskonvention pro Werk</span>
-                                    </div>
-                                </td>
-                                <td class="p-4"><span class="tag tag-purple">Vormonat</span></td>
-                                <td class="p-4"><span class="tag tag-blue">Planer</span></td>
-                                <td class="p-4 text-[#6b7281]">Volle Bearbeitungsrechte notwendig</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4">
-                                    <div class="flex items-center">
-                                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 019 9v.375M10.125 2.25A3.375 3.375 0 0113.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 013.375 3.375M9 15l2.25 2.25L15 12" /></svg>
-                                        <span>Rotationen und Standardbedarfe anwenden</span>
-                                    </div>
-                                </td>
-                                <td class="p-4"><span class="tag tag-purple">Vorwoche</span></td>
-                                <td class="p-4"><span class="tag tag-blue">Planer</span></td>
-                                <td class="p-4 text-[#6b7281]">Anlage über Schichtrotationen oder Schichtplanvorlagen</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4">
-                                    <div class="flex items-center">
-                                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path></svg>
-                                        <span>Wenn erforderlich: Manuelle Korrekturen von Mitarbeiterbedarfen bei einzelnen Schichten (Bedarfe, Schicht-Etiketten oder Notizen)</span>
-                                    </div>
-                                </td>
-                                <td class="p-4"><span class="tag tag-purple">Vorwoche</span></td>
-                                <td class="p-4"><span class="tag tag-blue">Planer</span></td>
-                                <td class="p-4 text-[#6b7281]">&nbsp;</td>
-                            </tr>
-                            <!-- Mitarbeiter-zuweisung -->
-                            <tr>
-                                 <td class="py-4 pl-6 pr-4 category-cell" rowspan="2">
-                                    <div class="absolute left-2 top-2 bottom-2 w-1 bg-[#77a0f6] rounded-full"></div>
-                                    <span>Mitarbeiter-zuweisung</span>
-                                </td>
-                                <td class="p-4">
-                                    <div class="flex items-center">
-                                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                                        <span>Automatisierte Mitarbeiter-Zuweisung durchführen</span>
-                                    </div>
-                                </td>
-                                 <td class="p-4"><span class="tag tag-purple">Vorwoche</span></td>
-                                <td class="p-4"><span class="tag tag-blue">Planer</span></td>
-                                <td class="p-4 text-[#6b7281]"><ul class="list-disc list-inside space-y-1"><li>Fokus auf Stammarbeitsplätze</li><li>Möglich für alle Arbeitsbereiche oder gesondert pro Arbeitsbereich</li></ul></td>
-                            </tr>
-                            <tr>
-                                <td class="p-4">
-                                    <div class="flex items-center">
-                                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /></svg>
-                                        <span>Manuelle Feinplanung durchführen</span>
-                                    </div>
-                                </td>
-                                <td class="p-4"><span class="tag tag-purple">Vorwoche</span></td>
-                                <td class="p-4"><span class="tag tag-blue">Planer</span></td>
-                                <td class="p-4 text-[#6b7281]"><ul class="list-disc list-inside space-y-1"><li>Auffüllen der Twistmaschinen</li><li>Filter z.B. nach Arbeitsbereichen, Schicht-Etiketten (für bspw. Priorisierung), Mitarbeiter-Merkmale</li></ul></td>
-                            </tr>
-                            <!-- Freigabe und Veröffentlichung -->
-                            <tr>
-                                <td class="py-4 pl-6 pr-4 category-cell" rowspan="3">
-                                    <div class="absolute left-2 top-2 bottom-2 w-1 bg-[#ff8eb7] rounded-full"></div>
-                                    <span>Freigabe und Veröffentlichung</span>
-                                </td>
-                                <td class="p-4">
-                                     <div class="flex items-center">
-                                         <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                                         <span>Optional: Mehrarbeitsschichten/Sonderschichten anlegen und mit Mitarbeitern besetzen</span>
-                                     </div>
-                                </td>
-                                <td class="p-4"><span class="tag tag-purple">Vorwoche</span></td>
-                                <td class="p-4"><span class="tag tag-blue">Planer</span></td>
-                                <td class="p-4 text-[#6b7281]">Auswertungstags verwenden</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4">
-                                    <div class="flex items-center">
-                                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.158.79.44 1.083.282.293.65.467 1.06.467h2c.41 0 .778-.174 1.06-.467.282-.293.44-.67.44-1.083 0-.231-.035-.454-.1-.664M6.75 8.25h10.5M6.75 12h10.5m-10.5 3.75h10.5M4.5 21v-15a2.25 2.25 0 012.25-2.25h10.5a2.25 2.25 0 012.25 2.25v15m-15 0h15" /></svg>
-                                        <span>Optional: Mehrarbeiten (Wochenende) freigeben</span>
-                                    </div>
-                                </td>
-                                <td class="p-4"><span class="tag tag-purple">Vorwoche</span></td>
-                                <td class="p-4"><span class="tag tag-pink">Betriebsrat</span></td>
-                                <td class="p-4 text-[#6b7281]">Link zu Schichtplan an Betriebsrat zur Freigabe</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4">
-                                    <div class="flex items-center">
-                                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        <span>Schichtplan veröffentlichen</span>
-                                    </div>
-                                </td>
-                                <td class="p-4"><span class="tag tag-purple">Montag d. Arbeitswoche</span></td>
-                                <td class="p-4"><span class="tag tag-blue">Planer</span></td>
-                                <td class="p-4 text-[#6b7281]">Automatische Benachrichtigung der Mitarbeiter</td>
-                            </tr>
-                            <!-- Laufende Anpassungen -->
-                             <tr>
-                                <td class="py-4 pl-6 pr-4 category-cell" rowspan="2">
-                                    <div class="absolute left-2 top-2 bottom-2 w-1 bg-[#f59e0b] rounded-full"></div>
-                                    <span>Laufende Anpassungen</span>
-                                </td>
-                                <td class="p-4">
-                                    <div class="flex items-center">
-                                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
-                                        <span>Anpassung am Schichtplan vornehmen</span>
-                                    </div>
-                                </td>
-                                <td class="p-4"><span class="tag tag-purple">Täglich</span></td>
-                                <td class="p-4"><span class="tag tag-blue">Planer</span></td>
-                                <td class="p-4 text-[#6b7281]">Automatische Benachrichtigung betroffener Mitarbeiter</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4">
-                                    <div class="flex items-center">
-                                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
-                                        <span>Änderungen von der Disposition einarbeiten</span>
-                                    </div>
-                                </td>
-                                <td class="p-4"><span class="tag tag-purple">Täglich</span></td>
-                                <td class="p-4"><span class="tag tag-blue">Planer</span></td>
-                                <td class="p-4 text-[#6b7281]">Manuelle Nachpflege von Schichten</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+                <table class="w-full text-left min-w-[800px] use-case-table">
+                    <thead class="text-xs text-slate-700 bg-slate-50">
+                        <tr>
+                            <th class="px-6 py-3 font-semibold w-[25%]">Kategorie</th>
+                            <th class="px-6 py-3 font-semibold w-[65%]">Arbeitsschritt</th>
+                            <th class="px-6 py-3 font-semibold w-[10%] text-center">Video</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm divide-y divide-slate-200">
+                        
+                        <tr>
+                            <td rowspan="2" class="px-6 py-4 font-semibold text-slate-800 category-cell border-r border-slate-200 align-middle">
+                                <div class="category-line" style="background-color: #9865f6;"></div>
+                                <span class="pl-4">Schichtplananlage inkl. Bedarfsplanung</span>
+                            </td>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">1</span>
+                                    <span>Leeren Schichtplan erstellen & Maschinen Vorplanen</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>1</span>Leeren Schichtplan erstellen & Maschinen Vorplanen" data-video-src="assets/videos/video1.mp4" data-info="Hinweise zum Erstellen und Vorplanen." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">2</span>
+                                    <span>Zusatzinformationen im Schichtplan ergänzen</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                               <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>2</span>Zusatzinformationen im Schichtplan ergänzen" data-video-src="assets/videos/video2.mp4" data-info="Hinweise zum Ergänzen von Zusatzinformationen." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2" class="px-6 py-4 font-semibold text-slate-800 category-cell border-r border-slate-200 align-middle">
+                                 <div class="category-line" style="background-color: #77a0f6;"></div>
+                                 <span class="pl-4">Mitarbeiter-zuweisung</span>
+                            </td>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">3</span>
+                                    <span>Schichten mit Mitarbeiter besetzen</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                               <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>3</span>Schichten mit Mitarbeiter besetzen" data-video-src="assets/videos/video3.mp4" data-info="Hinweise zum Besetzen von Schichten." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">4</span>
+                                    <span>Besetzung der Mitarbeiter auf den Schichten prüfen</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>4</span>Besetzung der Mitarbeiter auf den Schichten prüfen" data-video-src="assets/videos/video4.mp4" data-info="Hinweise zur Prüfung der Schichtbesetzung." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td rowspan="4" class="px-6 py-4 font-semibold text-slate-800 category-cell border-r border-slate-200 align-middle">
+                                <div class="category-line" style="background-color: #ff8eb7;"></div>
+                                <span class="pl-4">Freigabe und Veröffentlichung</span>
+                            </td>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">5</span>
+                                    <span>Mehrarbeiten der Mitarbeiter einplanen</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>5</span>Mehrarbeiten der Mitarbeiter einplanen" data-video-src="assets/videos/video5.mp4" data-info="Hinweise zum Einplanen von Mehrarbeit." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">6</span>
+                                    <span>Freigabe vom Betriebsrat vorbereiten</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                               <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>6</span>Freigabe vom Betriebsrat vorbereiten" data-video-src="assets/videos/video6.mp4" data-info="Hinweise zur Vorbereitung der Betriebsratsfreigabe." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">7</span>
+                                    <span>Schichtplan veröffentlichen mit Hinweis an meine Mitarbeiter versenden</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>7</span>Schichtplan veröffentlichen" data-video-src="assets/videos/video7.mp4" data-info="Hinweise zum Veröffentlichen des Schichtplans." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">8</span>
+                                    <span>Urlaubsanträge berücksichtigen</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>8</span>Urlaubsanträge berücksichtigen" data-video-src="assets/videos/video8.mp4" data-info="Hinweise zur Berücksichtigung von Urlaubsanträgen." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td rowspan="5" class="px-6 py-4 font-semibold text-slate-800 category-cell border-r border-slate-200 align-middle">
+                                <div class="category-line" style="background-color: #f59e0b;"></div>
+                                <span class="pl-4">Laufende Anpassungen</span>
+                            </td>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">9</span>
+                                    <span>Mehrarbeitsgenehmigungen und Zeitkorrekturen meiner Mitarbeiter berücksichtigen</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>9</span>Mehrarbeitsgenehmigungen und Zeitkorrekturen berücksichtigen" data-video-src="assets/videos/video9.mp4" data-info="Hinweise zu Mehrarbeitsgenehmigungen und Zeitkorrekturen." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">10</span>
+                                    <span>Stempelungen meiner Mitarbeiter einsehen</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>10</span>Stempelungen meiner Mitarbeiter einsehen" data-video-src="assets/videos/video10.mp4" data-info="Hinweise zum Einsehen von Stempelungen." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">11</span>
+                                    <span>Kurzfristige Abwesenheiten meiner Mitarbeiter berücksichtigen</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>11</span>Kurzfristige Abwesenheiten berücksichtigen" data-video-src="assets/videos/video11.mp4" data-info="Hinweise zum Umgang mit kurzfristigen Abwesenheiten." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">12</span>
+                                    <span>Bewerbung auf Schichten berücksichtigen</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>12</span>Bewerbung auf Schichten berücksichtigen" data-video-src="assets/videos/video12.mp4" data-info="Hinweise zur Berücksichtigung von Schichtbewerbungen." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-4 text-slate-600">
+                                <div class="flex items-center">
+                                    <span class="font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-4">13</span>
+                                    <span>Mitarbeiter kurzfristig umplanen</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <button data-action="open-video-modal" data-full-title="<span class='font-mono bg-slate-100 text-slate-700 rounded-full w-6 h-6 inline-flex items-center justify-center flex-shrink-0 mr-3'>13</span>Mitarbeiter kurzfristig umplanen" data-video-src="assets/videos/video13.mp4" data-info="Hinweise zur kurzfristigen Umplanung von Mitarbeitern." class="text-purple-600 hover:text-purple-800"><i data-lucide="play-circle" class="h-6 w-6"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             `
         }
