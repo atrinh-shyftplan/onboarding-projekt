@@ -217,15 +217,13 @@ export const toolPages = {
                         <div class="timeline-cell no-border"></div>
                         <div class="timeline-cell" style="grid-column: 2 / -1; padding: 0.75rem 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.05);">
                             <div class="phases-wrapper">
-                                <div class="phase-block"><div class="chevron chevron-0" style="margin-left: 0;"><h2 class="text-xl font-bold">Phase 0: Vorbereitung</h2></div><div class="timeframe">1 Monat</div></div>
-                                <div class="phase-block"><div class="chevron chevron-1"><h2 class="text-xl font-bold">Phase 1: Setup</h2></div><div class="timeframe">1 Monat</div></div>
-                                <div class="phase-block"><div class="chevron chevron-2"><h2 class="text-xl font-bold">Phase 2: PoC</h2></div><div class="timeframe">3 Monate</div></div>
-                                <div class="phase-block"><div class="chevron chevron-3"><h2 class="text-xl font-bold">Phase 3: Ausrollen</h2></div><div class="timeframe">2 Monate</div></div>
+                                <div class="phase-block"><div class="chevron chevron-0" style="margin-left: 0;"><h2 class="text-xl font-bold">Vorbereitung</h2></div><div class="timeframe">September / Oktober</div></div>
+                                <div class="phase-block"><div class="chevron chevron-1"><h2 class="text-xl font-bold">Kick-off</h2></div><div class="timeframe">bis November</div></div>
+                                <div class="phase-block"><div class="chevron chevron-2"><h2 class="text-xl font-bold">Fachliche & Technische Umsetzung</h2></div><div class="timeframe">bis Februar</div></div>
+                                <div class="phase-block"><div class="chevron chevron-3"><h2 class="text-xl font-bold">Einführung & Go-Live</h2></div><div class="timeframe">ab März</div></div>
                             </div>
                         </div>
 
-                        <div class="milestone" style="left: calc(100% * (0.8 / 4.8) + 1rem);"><div class="milestone-icon"></div><span>Vertragsabschluss</span></div>
-                        <div class="milestone" style="left: calc(100% * (1.8 / 4.8) + 1rem);"><div class="milestone-icon"></div><span>Projektstart</span></div>
                         <!-- Projektleitung Row -->
                         <div class="timeline-row">
                             <div class="timeline-cell role-cell flex items-center role-projektleitung">
@@ -246,19 +244,18 @@ export const toolPages = {
                             </div>
                             <div class="timeline-cell activity-cell">
                                 <ul class="list-disc">
-                                    <li>Projektauftakt mit Stakeholdern</li>
                                     <li class="bg-violet-50 border border-violet-200 rounded-lg -ml-1 p-1">
                                         <button data-action="open-iframe-modal" data-src="projektplan.html" data-title="Projektplanung" class="inline-flex items-center gap-2 text-left font-medium text-shyftplan-purple transition-colors group w-full" title="Projektplan anzeigen">
                                             <span class="flex-grow">Projektplanung</span><i data-lucide="eye" class="h-5 w-5 text-shyftplan-purple/70 group-hover:text-shyftplan-purple transition-colors"></i>
                                         </button>
                                     </li>
-                                    <li>Vorbereitung Change Management</li></ul>
+                                    <li>Kundenerfahrung aus vergangen Projekten</li></ul>
                             </div>
                             <div class="timeline-cell activity-cell">
-                                <ul class="list-disc"><li>PoC-Steuerung und Qualitätssicherung</li><li>Change Management (insb. Mitarbeiterkommunikation/Flyer, individuelle Akzeptanzmaßnahmen)</li></ul>
+                                <ul class="list-disc"><li>Projektsteuerung und Qualitätssicherung</li><li>Kommunikationsplan (inkl der priorisieren Instrumente vom Kick-off Workshop)</li></ul>
                             </div>
                             <div class="timeline-cell activity-cell">
-                                <ul class="list-disc"><li>Rollout-Kommunikation</li><li>Qualitätssicherung der Planer- und Mitarbeiterschulungen</li></ul>
+                                <ul class="list-disc"><li>Freigabe aller Verantwortlichen einholen</li><li>Qualitätssicherung der Planer- und Mitarbeiterschulungen</li></ul>
                             </div>
                         </div>
 
@@ -272,17 +269,17 @@ export const toolPages = {
                             </div>
                             <div class="timeline-cell activity-cell">
                                 <ul class="list-disc">
-                                    <li>Vorbereitung Echtdaten</li>
+                                    <li>Vorbereitung & Bereitstellung Echtdaten (Abwesenheitstypen, Arbeitszeitmodelle, etc.)</li>
                                 </ul>
                             </div>
                             <div class="timeline-cell activity-cell">
-                                <ul class="list-disc"><li>Bereitstellung Echtdaten (Abwesenheitstypen, Arbeitszeitmodelle, etc.)</li></ul>
+                                <ul class="list-disc"><li>Erwartete Mehrwerte</li></ul>
                             </div>
                             <div class="timeline-cell activity-cell">
-                                <ul class="list-disc"><li>Fachliche PoC-Abnahme</li></ul>
+                                <ul class="list-disc"><li>Fachliche Abnahme</li></ul>
                             </div>
                             <div class="timeline-cell activity-cell">
-                                <ul class="list-disc"><li>Go-Live-Support</li></ul>
+                                <ul class="list-disc"><li>Verfügbarkeit bei Rückfragen</li><li>Begleitung Mitarbeiterkommunikation</li></ul>
                             </div>
                         </div>
 
@@ -318,28 +315,28 @@ export const toolPages = {
                                 </ul>
                             </div>
                             <div class="timeline-cell activity-cell">
-                                <ul class="list-disc"><li>Go-Live-Support</li></ul>
+                                <ul class="list-disc"><li>Verfügbarkeit bei Rückfragen</li></ul>
                             </div>
                         </div>
 
-                        <!-- Kernplaner Row -->
+                        <!-- Fachlich Verantwortlicher Row -->
                         <div class="timeline-row">
                             <div class="timeline-cell role-cell flex items-center role-kernplaner">
                                 <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-xl mr-4">
                                    <svg xmlns="http://www.w3.org/2000/svg" class="role-icon h-8 w-8" style="color: #14b8a6;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                                 </div>
-                                <h3 class="font-bold text-gray-900 text-lg">Kernplaner</h3>
+                                <h3 class="font-bold text-gray-900 text-lg">Fachlich Verantwortlicher</h3>
                             </div>
                             <div class="timeline-cell activity-cell">
                                 <ul class="list-disc"></ul>
                             </div>
                             <div class="timeline-cell activity-cell">
-                                <ul class="list-disc"><li>Übersicht heutige Schichtplanung</li><li>Angeleitete grundlegende Account-Konfiguration</li></ul>
+                                <ul class="list-disc"><li>Angeleitete grundlegende Account-Konfiguration</li><li>Vereinbarte Mehrwerte</li></ul>
                             </div>
                             <div class="timeline-cell activity-cell">
                                 <ul class="list-disc">
                                     <li>Anwendungsfälle in shyftplan</li>
-                                    <li>Fachliche PoC-Abnahme</li>
+                                    <li>Fachliche Abnahme</li>
                                     <li class="bg-violet-50 border border-violet-200 rounded-lg -ml-4 -mr-4 p-1 pl-4">
                                         <button data-action="open-iframe-modal" data-src="use-cases.html" data-title="Fachliche Schnittstellenabnahme (Anwendungsfälle)" class="inline-flex items-center gap-2 text-left font-medium text-shyftplan-purple transition-colors group w-full" title="Anwendungsfälle anzeigen">
                                             <span class="flex-grow">Fachliche Schnittstellenabnahme</span><i data-lucide="eye" class="h-5 w-5 text-shyftplan-purple/70 group-hover:text-shyftplan-purple transition-colors"></i>
@@ -367,10 +364,10 @@ export const toolPages = {
                                 <ul class="list-disc"><li>Bestätigung des Anforderungsprofils an Trainer</li></ul>
                             </div>
                             <div class="timeline-cell activity-cell">
-                                <ul class="list-disc"><li>Vorbereitung Planerschulung (zeitlich und inhaltlich)</li></ul>
+                                <ul class="list-disc"><li>Teilnahme Train-the-Trainer (TtT)</li><li>Vorbereitung Planerschulung (zeitlich und inhaltlich)</li></ul>
                             </div>
                             <div class="timeline-cell activity-cell">
-                                <ul class="list-disc"><li>Teilnahme Train-the-Trainer (TtT)</li><li>Durchführung der Planer- und Mitarbeiterschulungen</li></ul>
+                                <ul class="list-disc"><li>Durchführung der Planerschulungen</li></ul>
                             </div>
                         </div>
                     </div>
